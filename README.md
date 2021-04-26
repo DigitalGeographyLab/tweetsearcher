@@ -18,6 +18,9 @@ If you want to convert the files into a GeoPackage file (a common spatial file f
 
 If you use this script in your research or project, please refer back to us using this:
 
+Väisänen, T., S. Sirkiä (2021) tweetsearcher: A python tool for downloading Tweets with Academic Access credentials. DOI: nothing/yet/here
+
+Also in BibTeX:
 ```
 Here be BibTeX and Zenodo DOI
 ```
