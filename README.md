@@ -46,6 +46,12 @@ Then just navigate to the repository directory on your local machine and type `p
 
 If you want to convert the files into a GeoPackage file (a common spatial file format) then run `python tweets_to_gpkg.py` in the directory where you have the `.pkl` files stored in. Then you can open them in QGIS and other GIS software like ArcGIS.
 
+## Notes on the output
+
+The script does some reshuffling and renaming of the "raw" output json, mostly out of necessity but partly for convenience. The output file will have individual tweets connected with the requested expansions (like place, media etc) unlike with the raw output where they're as a separate json object. However, for referenced tweets it only returns the referenced tweet id and author id. If there are geotags, the output file will signify whether they're based on gps coordinates or a bounding box centroids, if both are present the gps coordinates are preferred. The geopackage export will drop some columns containing unparsed json-objects or list-like objects, because they're not supported by the file format.
+
+If you're not interested in what bots have to say, then you have to do the cleaning up yourself. Checking the `source` of the tweet and removing all posts from sources that seem bot-like or automated is a simple first step. Then you can use Botometer to do account-specific checking for the rest (the free option has a 500 account daily quota).
+
 ## Referencing
 
 If you use this script in your research or project, please refer back to us using this:
@@ -57,5 +63,5 @@ Also in BibTeX:
 Here be BibTeX and Zenodo DOI
 ```
 
-## Other
+## Other options
 If this tool isn't quite what you're looking for, consider taking a look at this nice tool for collecting Twitter data using Academic Research credentials is this one by Christoph Fink: https://gitlab.com/christoph.fink/twitterhistory
