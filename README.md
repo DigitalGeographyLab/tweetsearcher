@@ -42,9 +42,13 @@ output_params:
 
 For example: The above search parameters file would search for tweets mentioning snow or rain that have been geotagged in Finland between January 1st and May 1st in 2020 and which are NOT retweets. *Please note that the end time date **IS NOT** collected, the collection stops at 23:59:59 the previous date, in this case on the 30th of April*. The parameters would return maximum of 500 results per call and a maximum of 100 000 tweets. The file would be saved with the prefix `my_weather_search` and one file would contain a maximum of 1 000 000 tweets. If you want to set up a daily collection, remove `start_time` and `end_time` from the config, then the script will collect tweets from yesterday (i.e. the day before the current day). For more specific instructions on how to build a search query see Twitter's documentation: https://developer.twitter.com/en/docs/twitter-api/tweets/search/integrate/build-a-query
 
-Then just navigate to the repository directory on your local machine and type `python tweets_to_file.py -f foo -b bar -test` and you after a while you should start accumulating pickled dataframes (`.pkl` files). They can be read into python with `pandas` library.
+Then just navigate to the repository directory on your local machine and type:
+```
+python v2_tweets_to_file.py -sd 2020-01-28 -ed 2020-05-29 -o pickle -w 45
+```
+and you after a while you should start accumulating pickled dataframes (`.pkl` files). They can be read into python with `pandas` library. The flags stand for `sd` = start date, `ed` = end date, `o` = output file format and `w` = wait time in seconds. Only `csv` and `pickle` are supported as the outputs from this script. Wait time is there to be used if you think you're going to hit the Twitter rate limits, for instance if you're downloading a very large dataset.
 
-If you want to convert the files into a GeoPackage file (a common spatial file format) then run `python tweets_to_gpkg.py` in the directory where you have the `.pkl` files stored in. Then you can open them in QGIS and other GIS software like ArcGIS.
+If you want to convert the files into a GeoPackage file (a common spatial file format) then run `python tweets_to_gpkg.py -o my_tweets.gpkg` in the directory where you have the `.pkl` files stored in and it will create a geopackage file called `my_tweets.gpkg` in the WGS-84 crs. Then you can open them in QGIS and other GIS software like ArcGIS.
 
 ## Notes on the output
 
