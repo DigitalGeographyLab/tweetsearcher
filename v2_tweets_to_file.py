@@ -77,8 +77,13 @@ ap.add_argument("-o", "--output", required=True, default='pkl',
                 help="Output file format, valid options are either pkl or csv. "
                 "Default: pkl")
 
+# get retrieval style
+ap.add_argument("-s", "--style", required=True, default='iterative',
+                help="Set retrieve style. Options: bulk or iterative. Bulk collects "
+                "tweets to one big file. Iterative collects each day separately")
+
 # get wait time
-ap.add_argument("-w", "--wait", required=True, default=45,
+ap.add_argument("-w", "--wait", required=False, default=45,
                 help="Set wait time between requests to avoid Twitter rate limits. "
                 "Default: 45")
 
@@ -87,6 +92,9 @@ args = vars(ap.parse_args())
 
 # get waittime
 waittime = int(args['wait'])
+
+# get retrieval style
+rstyle = args['style']
 
 # define date range function
 def daterange(start_date, end_date):
@@ -447,27 +455,102 @@ expansions = ",".join(["attachments.media_keys", "author_id", "entities.mentions
 start_date = args['startdate'].date()
 end_date = args['enddate'].date()
 
-# loop through dates
-for single_date in daterange(start_date, end_date):
+# check which retrieval style
+if rstyle == 'iterative':
     
-    # set start timestamp
-    start_ts = single_date
+    # loop through dates
+    for single_date in daterange(start_date, end_date):
+        
+        # set start timestamp
+        start_ts = single_date
+        
+        # set end timestamp
+        end_ts =  single_date + timedelta(days=1)
+        
+        # payload rules for v2 api
+        rule = gen_request_parameters(query = config['query'],
+                                results_per_call = config['results_per_call'],
+                                start_time = start_ts.isoformat(),
+                                end_time = end_ts.isoformat(),
+                                tweet_fields = tweetfields,
+                                user_fields = userfields,
+                                media_fields = mediafields,
+                                place_fields = placefields,
+                                expansions = expansions,
+                                stringify = False)
     
-    # set end timestamp
-    end_ts =  single_date + timedelta(days=1)
+        # result stream from twitter v2 api
+        rs = ResultStream(request_parameters = rule,
+                          max_results=100000,
+                          max_pages=1,
+                          max_tweets = config['max_tweets'],
+                          **search_creds)
+        
+        # indicate which day is getting retrieved
+        print('[INFO] - Retrieving tweets from ' + str(start_ts))
+    
+        # get json response to list
+        tweets = list(rs.stream())
+        
+        # parse results to dataframe
+        print('[INFO] - Parsing tweets from ' + str(start_ts))
+        tweetdf = v2parser(tweets, config['results_per_call'])
+        
+        # try to order columns semantically
+        try:
+            tweetdf = tweetdf[['id', 'author_id', 'created_at', 'reply_settings', 'conversation_id',
+                               'source', 'in_reply_to_user_id', 'text', 'possibly_sensitive',
+                               'lang', 'referenced_tweets', 'referenced_tweets.id', 
+                               'referenced_tweets.author_id', 'referenced_tweets.type',
+                               'public_metrics.retweet_count', 'public_metrics.reply_count',
+                               'public_metrics.like_count', 'public_metrics.quote_count',
+                               'entities.mentions', 'entities.urls', 'entities.hashtags',
+                               'entities.annotations', 'attachments.media_keys',
+                               'attachments.media_types', 'user.description', 'user.verified', 'user.id', 'user.protected',
+                               'user.url', 'user.profile_image_url', 'user.location', 'user.name',
+                               'user.created_at', 'user.username', 'user.public_metrics.followers_count',
+                               'user.public_metrics.following_count', 'user.public_metrics.tweet_count',
+                               'user.public_metrics.listed_count', 'user.entities.description.hashtags',
+                               'user.entities.url.urls', 'user.entities.description.mentions',
+                               'user.entities.description.urls', 'geo.place_id', 'geo.coordinates.type',
+                               'geo.coordinates.coordinates', 'geo.coordinates.x', 'geo.coordinates.y',
+                               'geo.full_name', 'geo.name', 'geo.place_type', 'geo.country',
+                               'geo.country_code', 'geo.type', 'geo.bbox', 'geo.centroid',
+                               'geo.centroid.x', 'geo.centroid.y']]
+        except:
+            pass
+        
+        # set up file prefix from config
+        file_prefix_w_date = config['filename_prefix'] + start_ts.isoformat()
+        outpickle = file_prefix_w_date + '.pkl'
+        outcsv = file_prefix_w_date + '.csv'
+        
+        # save to file
+        if args['output'] == 'pickle':
+            # save to pickle
+            tweetdf.to_pickle(outpickle)
+        elif args['output'] == 'csv':
+            # save to csv
+            tweetdf.to_csv(outcsv, sep=';', encoding='utf-8')
+        
+        # sleeps to not hit request limit so soon
+        time.sleep(waittime)
+
+# check if retrieval style if bulk
+elif rstyle == 'bulk':
     
     # payload rules for v2 api
     rule = gen_request_parameters(query = config['query'],
-                            results_per_call = config['results_per_call'],
-                            start_time = start_ts.isoformat(),
-                            end_time = end_ts.isoformat(),
-                            tweet_fields = tweetfields,
-                            user_fields = userfields,
-                            media_fields = mediafields,
-                            place_fields = placefields,
-                            expansions = expansions,
-                            stringify = False)
-
+                                  results_per_call = config['results_per_call'],
+                                  start_time = start_ts.isoformat(),
+                                  end_time = end_ts.isoformat(),
+                                  tweet_fields = tweetfields,
+                                  user_fields = userfields,
+                                  media_fields = mediafields,
+                                  place_fields = placefields,
+                                  expansions = expansions,
+                                  stringify = False)
+    
     # result stream from twitter v2 api
     rs = ResultStream(request_parameters = rule,
                       max_results=100000,
@@ -477,7 +560,7 @@ for single_date in daterange(start_date, end_date):
     
     # indicate which day is getting retrieved
     print('[INFO] - Retrieving tweets from ' + str(start_ts))
-
+    
     # get json response to list
     tweets = list(rs.stream())
     
@@ -521,8 +604,5 @@ for single_date in daterange(start_date, end_date):
     elif args['output'] == 'csv':
         # save to csv
         tweetdf.to_csv(outcsv, sep=';', encoding='utf-8')
-    
-    # sleeps to not hit request limit so soon
-    time.sleep(waittime) 
 
 print('[INFO] - ... done!')
