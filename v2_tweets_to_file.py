@@ -47,7 +47,7 @@ The collector collects tweets starting from 00:00 hours on the starting day and
 ends the collection on 23:59:59 on the day before the end date. In the example
 above the last collected day would be 2019-06-14.
 
-@author: waeiski
+@author: Tuomas Väisänen & Seija Sirkiä
 """
 from searchtweets import ResultStream, gen_request_parameters, load_credentials, read_config
 from datetime import timedelta, datetime

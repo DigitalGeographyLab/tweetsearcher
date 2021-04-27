@@ -3,7 +3,7 @@
 """
 Created on Mon Apr 19 11:29:53 2021
 
-@author: waeiski
+@author: Tuomas Väisänen (waeiski)
 """
 # import glob
 import pandas as pd
@@ -24,13 +24,15 @@ args = vars(ap.parse_args())
 
 # create empty list for file paths
 filelist = []
+
 # populate list with file paths
 for pickle in glob.glob('*.pkl'):
     filelist.append(pickle)
 
 # create empty list for dataframes
 dflist = []
-# popualte list with dataframes
+
+# populate list with dataframes
 print('[INFO] - Reading pickled dataframes...')
 for file in filelist:
     data = pd.read_pickle(file)
@@ -42,11 +44,13 @@ data = pd.concat(dflist, ignore_index=True)
 # loop over data
 print('[INFO] - Parsing coordinate information...')
 for i, row in data.iterrows():
+    
     # parse gps coordinates if present
     if row['geo.coordinates.x'] != None:
         data.at[i, 'locinfo_type'] = 'gps'
         data.at[i, 'x_coord'] = row['geo.coordinates.x']
         data.at[i, 'y_coord'] = row['geo.coordinates.y']
+        
     # parse bounding box coordinates if no gps coordinates
     elif row['geo.coordinates.x'] == None:
         data.at[i, 'locinfo_type'] = 'bbox'
