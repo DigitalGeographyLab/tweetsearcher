@@ -46,13 +46,13 @@ Then just navigate to the cloned repository directory on your local machine and 
 ```
 python v2_tweets_to_file.py -sd 2020-01-28 -ed 2020-05-29 -o pickle -w 45
 ```
-and you after a while you should start accumulating pickled dataframes (`.pkl` files) one per date, so if you're requesting a full year then you'll be getting 365 files. They can be read into python with `pandas` library for easier manipulation. `csv` files are also supported, but some fields containing data types like `list` and `dict` objects will be converted to plaintext. The flags stand for `sd` = start date, `ed` = end date, `o` = output file format and `w` = wait time in seconds. Wait time is there to be used if you think you're going to hit the Twitter rate limits, for example when downloading a large dataset like a full year of geotagged tweets from Finland. *Please note that the end time date **IS NOT** collected, the collection stops at 23:59:59 the previous date, in the example case on the 28th of May at 23:59:59*.
+and you after a while you should start accumulating pickled dataframes (`.pkl` files) one per date, so if you're requesting a full year then you'll be getting 365 files. They can be read into python with [Pandas](https://pandas.pydata.org/) library for further processing. `.csv` files are also supported, but some fields containing data types like `list` and `dict` objects will be converted to plaintext. The flags stand for `sd` = start date, `ed` = end date, `o` = output file format and `w` = wait time in seconds. Wait time is there to be used if you think you're going to hit the Twitter rate limits, for example when downloading a large dataset like a full year of geotagged tweets from Finland. *Please note that the end time date **IS NOT** collected, the collection stops at 23:59:59 the previous date, in the example case on the 28th of May at 23:59:59*.
 
-You can then combine all the daily `pkl` files with `combine_tweets.py` file. It supports saving to a [GeoPackage](https://www.geopackage.org/) file (a common spatial file format like shapefile), a pickled Pandas dataframe and a plain csv file. To combine tweets run the following command in the directory where you have the `.pkl` files:
+You can then combine all the daily `.pkl` files with `combine_tweets.py` file. It supports saving to a [GeoPackage](https://www.geopackage.org/) file (a common spatial file format like shapefile), a pickled Pandas dataframe and a plain csv file. Combining tweest from `.csv` files hasn't been implemented. To combine tweets run the following command in the directory where you have the `.pkl` files:
 ```
-python tweets_to_gpkg.py -f gpkg -o my_tweets.gpkg
+python combine_tweets.py -f gpkg -o my_tweets.gpkg
 ```
-The script a geopackage file called `my_tweets.gpkg` in the WGS-84 crs, which you can open in QGIS and other GIS software like ArcGIS. Combining tweets from `csv` files hasn't been implemented.
+The script a geopackage file called `my_tweets.gpkg` in the WGS-84 crs, which you can open in QGIS and other GIS software like ArcGIS. Other supported outputs are `.pkl` and `.csv` files. Combining tweets works only from `.pkl` files.
 
 ## Notes on the output
 
@@ -76,4 +76,4 @@ Here be BibTeX and Zenodo DOI
 ```
 
 ## Other options
-If this tool isn't quite what you're looking for, consider taking a look at this nice tool for collecting Twitter data using Academic Research credentials is this one by Christoph Fink: https://gitlab.com/christoph.fink/twitterhistory
+If this tool isn't quite what you're looking for, consider taking a look at this nice tool for collecting Twitter data using Academic Research credentials by Christoph Fink: https://gitlab.com/christoph.fink/twitterhistory
