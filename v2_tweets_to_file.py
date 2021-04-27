@@ -352,26 +352,49 @@ def v2parser(tweets, maxcalls):
     print('[INFO] - Combining tweet and expansion dataframes..')
     twtdf = pd.concat(twtlist, ignore_index=True)
     
-    refdf = pd.concat(reflist, ignore_index=True)
-    refdf = refdf.drop_duplicates()
+    # try concatenating referenced tweets expansion data
+    try:
+        refdf = pd.concat(reflist, ignore_index=True)
+        refdf = refdf.drop_duplicates()
+    except:
+        print('[INFO] - No referenced tweets at all in response.')
     
+    # concatenate user expansion data
     userdf = pd.concat(userlist, ignore_index=True)
     userdf = userdf.drop_duplicates(subset=['user.id'])
     
-    placedf = pd.concat(placelist, ignore_index=True)
-    placedf = placedf.drop_duplicates(subset=['geo.id'])
+    # try concatenating place expansion
+    try:
+        placedf = pd.concat(placelist, ignore_index=True)
+        placedf = placedf.drop_duplicates(subset=['geo.id'])
+    except:
+        print('[INFO] - No place expansions at all in response.')
     
-    mediadf = pd.concat(medialist, ignore_index=True)
-    
-    # parse media types
-    twtdf = media_parse(twtdf, mediadf)
+    # try concatenating media expansion
+    try:
+        mediadf = pd.concat(medialist, ignore_index=True)
+        
+        # parse media types
+        twtdf = media_parse(twtdf, mediadf)
+    except:
+        print('[INFO] - No media expansions at all in response.')
     
     # combine together
     print('[INFO] - Combining tweets and expansions to one dataframe...')
-    outdf = pd.merge(twtdf, placedf, left_on='geo.place_id', right_on='geo.id', how='left')
-    outdf = pd.merge(outdf, userdf, left_on='author_id', right_on='user.id')
-    outdf = pd.merge(outdf, refdf, left_on='referenced_tweets.id', right_on='referenced_tweets.tweet_id',
-                     how='left')
+    outdf = pd.merge(twtdf, userdf, left_on='author_id', right_on='user.id')
+    
+    # connect places to tweets if places are present
+    try:
+        outdf = pd.merge(outdf, placedf, left_on='geo.place_id', right_on='geo.id', how='left')
+    except:
+        pass
+    
+    # connected referenced tweets to original tweets if referenced tweets are present
+    try:
+        outdf = pd.merge(outdf, refdf, left_on='referenced_tweets.id', right_on='referenced_tweets.tweet_id',
+                         how='left')
+    except:
+        pass
     
     
     # convert NaNs to Nones
@@ -460,28 +483,31 @@ for single_date in daterange(start_date, end_date):
     
     # parse results to dataframe
     print('[INFO] - Parsing tweets from ' + str(start_ts))
-    tweetdf = v2parser(tweets, 500)
+    tweetdf = v2parser(tweets, config['results_per_call'])
     
-    # order columns semantically
-    tweetdf = tweetdf[['id', 'author_id', 'created_at', 'reply_settings', 'conversation_id',
-                       'source', 'in_reply_to_user_id', 'text', 'possibly_sensitive',
-                       'lang', 'referenced_tweets', 'referenced_tweets.id', 
-                       'referenced_tweets.author_id', 'referenced_tweets.type',
-                       'public_metrics.retweet_count', 'public_metrics.reply_count',
-                       'public_metrics.like_count', 'public_metrics.quote_count',
-                       'entities.mentions', 'entities.urls', 'entities.hashtags',
-                       'entities.annotations', 'attachments.media_keys',
-                       'attachments.media_types', 'user.description', 'user.verified', 'user.id', 'user.protected',
-                       'user.url', 'user.profile_image_url', 'user.location', 'user.name',
-                       'user.created_at', 'user.username', 'user.public_metrics.followers_count',
-                       'user.public_metrics.following_count', 'user.public_metrics.tweet_count',
-                       'user.public_metrics.listed_count', 'user.entities.description.hashtags',
-                       'user.entities.url.urls', 'user.entities.description.mentions',
-                       'user.entities.description.urls', 'geo.place_id', 'geo.coordinates.type',
-                       'geo.coordinates.coordinates', 'geo.coordinates.x', 'geo.coordinates.y',
-                       'geo.full_name', 'geo.name', 'geo.place_type', 'geo.country',
-                       'geo.country_code', 'geo.type', 'geo.bbox', 'geo.centroid',
-                       'geo.centroid.x', 'geo.centroid.y']]
+    # try to order columns semantically
+    try:
+        tweetdf = tweetdf[['id', 'author_id', 'created_at', 'reply_settings', 'conversation_id',
+                           'source', 'in_reply_to_user_id', 'text', 'possibly_sensitive',
+                           'lang', 'referenced_tweets', 'referenced_tweets.id', 
+                           'referenced_tweets.author_id', 'referenced_tweets.type',
+                           'public_metrics.retweet_count', 'public_metrics.reply_count',
+                           'public_metrics.like_count', 'public_metrics.quote_count',
+                           'entities.mentions', 'entities.urls', 'entities.hashtags',
+                           'entities.annotations', 'attachments.media_keys',
+                           'attachments.media_types', 'user.description', 'user.verified', 'user.id', 'user.protected',
+                           'user.url', 'user.profile_image_url', 'user.location', 'user.name',
+                           'user.created_at', 'user.username', 'user.public_metrics.followers_count',
+                           'user.public_metrics.following_count', 'user.public_metrics.tweet_count',
+                           'user.public_metrics.listed_count', 'user.entities.description.hashtags',
+                           'user.entities.url.urls', 'user.entities.description.mentions',
+                           'user.entities.description.urls', 'geo.place_id', 'geo.coordinates.type',
+                           'geo.coordinates.coordinates', 'geo.coordinates.x', 'geo.coordinates.y',
+                           'geo.full_name', 'geo.name', 'geo.place_type', 'geo.country',
+                           'geo.country_code', 'geo.type', 'geo.bbox', 'geo.centroid',
+                           'geo.centroid.x', 'geo.centroid.y']]
+    except:
+        pass
     
     # set up file prefix from config
     file_prefix_w_date = config['filename_prefix'] + start_ts.isoformat()
