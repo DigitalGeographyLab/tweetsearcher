@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/361720473.svg)](https://zenodo.org/badge/latestdoi/361720473)
+
 # tweetsearcher
 A Python tool to download Tweets using Academic Research credentials and the API v2 developed at [Digital Geography Lab](https://www2.helsinki.fi/en/researchgroups/digital-geography-lab). 
 
@@ -80,7 +82,7 @@ This tool is in very early stages of development and issues can arise if downloa
 
 If you use this script in your research or project, or develop it further, please refer back to us using this:
 
-Väisänen, T., S. Sirkiä, O. Järv & T. Toivonen (2021) tweetsearcher: A python tool for downloading Tweets for academic research. DOI: nothing/yet/here
+Väisänen, T., S. Sirkiä, O. Järv & T. Toivonen (2021) tweetsearcher: A python tool for downloading Tweets for academic research. DOI: 10.5281/zenodo.4723336
 
 Also in BibTeX:
 ```
