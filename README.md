@@ -48,13 +48,19 @@ python v2_tweets_to_file.py -sd 2020-01-28 -ed 2020-05-29 -o pickle -w 45
 ```
 and you after a while you should start accumulating pickled dataframes (`.pkl` files) one per date, so if you're requesting a full year then you'll be getting 365 files. They can be read into python with `pandas` library for easier manipulation. `csv` files are also supported, but some fields containing data types like `list` and `dict` objects will be converted to plaintext. The flags stand for `sd` = start date, `ed` = end date, `o` = output file format and `w` = wait time in seconds. Wait time is there to be used if you think you're going to hit the Twitter rate limits, for example when downloading a large dataset like a full year of geotagged tweets from Finland. *Please note that the end time date **IS NOT** collected, the collection stops at 23:59:59 the previous date, in the example case on the 28th of May at 23:59:59*.
 
-If you want to convert the files into a [GeoPackage](https://www.geopackage.org/) file (a common spatial file format like shapefile) then run `python tweets_to_gpkg.py -o my_tweets.gpkg` in the directory where you have the `.pkl` files stored in and it will create a geopackage file called `my_tweets.gpkg` in the WGS-84 crs. Then you can open them in QGIS and other GIS software like ArcGIS. Conversion from `csv` to `gpkg` hasn't been implemented.
+You can then combine all the daily `pkl` files with `combine_tweets.py` file. It supports saving to a [GeoPackage](https://www.geopackage.org/) file (a common spatial file format like shapefile), a pickled Pandas dataframe and a plain csv file. To combine tweets run the following command in the directory where you have the `.pkl` files:
+```
+python tweets_to_gpkg.py -f gpkg -o my_tweets.gpkg
+```
+The script a geopackage file called `my_tweets.gpkg` in the WGS-84 crs, which you can open in QGIS and other GIS software like ArcGIS. Combining tweets from `csv` files hasn't been implemented.
 
 ## Notes on the output
 
 The script does some reshuffling and renaming of the "raw" output json, mostly out of necessity (duplicate field names etc.) but partly for convenience (similar fields are next to each other). The output file will have individual tweets connected with the requested expansions (like place, media etc) unlike with the raw output where they're as a separate json object. However, for referenced tweets it only returns the referenced tweet id and author id. If there are geotags, the output file will signify whether they're based on gps coordinates or a bounding box centroids, if both are present the gps coordinates are preferred. Please note that the timestamp in the `created_at` field is a UTC timestamp and you may want to convert it to a local time zone if you're doing temporal analysis.
 
 The geopackage export script will drop some columns containing unparsed `dict` and `list` data types, because they're not supported by the file format.
+
+The csv files use semicolon (;) as the separator and utf-8 as their encoding.
 
 If you're not interested in what bots have to say, then you have to do the cleaning up yourself. Checking the `source` of the tweet and removing all posts from sources that seem bot-like or automated is a simple first step. There are plenty of bots posting weather data, satellite positions, every dicionary word in a given language etc. After initial bot cleaning, you can use [Botometer](https://botometer.osome.iu.edu/) to do account-specific checking for the rest (the free option has a 500 account daily quota).
 
