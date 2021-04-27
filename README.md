@@ -1,5 +1,5 @@
 # tweetsearcher
-A Python tool to download Tweets using Academic Research credentials and the API v2 developed at [Digital Geography Lab](https://www2.helsinki.fi/en/researchgroups/digital-geography-lab).
+A Python tool to download Tweets using Academic Research credentials and the API v2 developed at [Digital Geography Lab](https://www2.helsinki.fi/en/researchgroups/digital-geography-lab). 
 
 ## What does it do?
 tweetsearcher is a Python tool designed to download Tweets from Twitter using Academic Research credentials. It downloads and automatically parses the json response from Twitter's API v2 saving it to a pickled dataframe. If one is inclined to do so, there's another script file included which will turn the pickled dataframes into geopackage files, commonly used in GIS.
@@ -44,15 +44,24 @@ For example: The above search config file would search for tweets mentioning sno
 
 Then just navigate to the cloned repository directory on your local machine and type:
 ```
-python v2_tweets_to_file.py -sd 2020-01-28 -ed 2020-05-29 -o pickle -w 45
+python v2_tweets_to_file.py -sd 2020-01-28 -ed 2020-05-29 -o pkl -w 45 -s iterative
 ```
-and you after a while you should start accumulating pickled dataframes (`.pkl` files) one per date, so if you're requesting a full year then you'll be getting 365 files. They can be read into python with [Pandas](https://pandas.pydata.org/) library for further processing. `.csv` files are also supported, but some fields containing data types like `list` and `dict` objects will be converted to plaintext. The flags stand for `sd` = start date, `ed` = end date, `o` = output file format and `w` = wait time in seconds. Wait time is there to be used if you think you're going to hit the Twitter rate limits, for example when downloading a large dataset like a full year of geotagged tweets from Finland. *Please note that the end time date **IS NOT** collected, the collection stops at 23:59:59 the previous date, in the example case on the 28th of May at 23:59:59*.
+and you after a while you should start accumulating pickled dataframes (`.pkl` files) one per date, so if you're requesting a full year then you'll be getting 365 files. `iterative` style is good for queries returning large amounts of tweets for each day (e.g. all geotagged tweets within Finland). For queries returning small per-day tweet amounts use `bulk` style by typing:
 
-You can then combine all the daily `.pkl` files with `combine_tweets.py` file. It supports saving to a [GeoPackage](https://www.geopackage.org/) file (a common spatial file format like shapefile), a pickled Pandas dataframe and a plain csv file. Combining tweest from `.csv` files hasn't been implemented. To combine tweets run the following command in the directory where you have the `.pkl` files:
+```
+python v2_tweets_to_file.py -sd 2020-01-28 -ed 2020-05-29 -o pkl -s bulk
+```
+and you will get just one `.pkl` file. Please note that this `bulk` option is suitable for only queries where there might be very few tweets per day.
+
+Output files by default are pickled pandas dataframes(`.pkl`). They can be read into python with [Pandas](https://pandas.pydata.org/) library for further processing. Saving to `.csv` files is also supported, but some fields containing data types like `list` and `dict` objects will be converted to plaintext. The flags stand for `sd` = start date, `ed` = end date, `o` = output file format, `w` = wait time in seconds (only for `iterative` style), and `s` = style. Wait time is there to be used if you think you're going to hit the Twitter rate limits when downloading tweets with `iterative`, for example when downloading a full year of geotagged tweets from Finland. *Please note that the end time date **IS NOT** collected, the collection stops at 23:59:59 the previous date, in the example case on the 28th of May at 23:59:59*.
+
+If you downloaded with `iterative` style, you might want to combine the pickled dataframes to one big file. You can do this with `combine_tweets.py`. It supports saving to a [GeoPackage](https://www.geopackage.org/) file (a common spatial file format like shapefile), a pickled Pandas dataframe and a plain csv file. Combining tweest from `.csv` files hasn't been implemented. To combine tweets run the following command in the directory where you have the `.pkl` files:
+
 ```
 python combine_tweets.py -f gpkg -o my_tweets.gpkg
 ```
-The script a geopackage file called `my_tweets.gpkg` in the WGS-84 crs, which you can open in QGIS and other GIS software like ArcGIS. Other supported outputs are `.pkl` and `.csv` files. Combining tweets works only from `.pkl` files.
+
+The script outputs a geopackage file `my_tweets.gpkg` in the WGS-84 crs, which you can open in QGIS and other GIS software like ArcGIS. Other supported outputs are `.pkl` and `.csv` files. Combining tweets works only from `.pkl` files.
 
 ## Notes on the output
 
@@ -64,9 +73,12 @@ The csv files use semicolon (;) as the separator and utf-8 as their encoding.
 
 If you're not interested in what bots have to say, then you have to do the cleaning up yourself. Checking the `source` of the tweet and removing all posts from sources that seem bot-like or automated is a simple first step. There are plenty of bots posting weather data, satellite positions, every dicionary word in a given language etc. After initial bot cleaning, you can use [Botometer](https://botometer.osome.iu.edu/) to do account-specific checking for the rest (the free option has a 500 account daily quota).
 
+# Known issues
+This tool is in very early stages of development and issues can arise if downloading very small datasets.
+
 ## Referencing
 
-If you use this script in your research or project, please refer back to us using this:
+If you use this script in your research or project, or develop it further, please refer back to us using this:
 
 Väisänen, T., S. Sirkiä, O. Järv & T. Toivonen (2021) tweetsearcher: A python tool for downloading Tweets for academic research. DOI: nothing/yet/here
 
