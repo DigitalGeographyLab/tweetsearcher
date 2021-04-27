@@ -73,9 +73,9 @@ ap.add_argument("-ed", "--enddate", required=True,
                 " YEAR-MO-DA for example 2018-02-18")
 
 # get save format
-ap.add_argument("-o", "--output", required=True, default='pickle',
-                help="Output file format, valid options are either pickle or csv. "
-                "Default: pickle")
+ap.add_argument("-o", "--output", required=True, default='pkl',
+                help="Output file format, valid options are either pkl or csv. "
+                "Default: pkl")
 
 # get wait time
 ap.add_argument("-w", "--wait", required=True, default=45,
@@ -387,7 +387,7 @@ def v2parser(tweets, maxcalls):
     return outdf
 
 # check if output filetypes are valid
-if args['output'] == 'pickle':
+if args['output'] == 'pkl':
     # save to pickle
     print('[INFO] - Output file set to pickle')
 elif args['output'] == 'csv':
