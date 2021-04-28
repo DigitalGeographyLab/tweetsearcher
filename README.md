@@ -1,4 +1,4 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4723337.svg)](https://doi.org/10.5281/zenodo.4723337)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4723336.svg)](https://doi.org/10.5281/zenodo.4723336)
 
 # tweetsearcher
 A Python tool to download Tweets using Academic Research credentials and the API v2 developed at [Digital Geography Lab](https://www2.helsinki.fi/en/researchgroups/digital-geography-lab). 
