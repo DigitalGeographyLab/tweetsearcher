@@ -100,7 +100,22 @@ Väisänen, T., S. Sirkiä, T. Hiippala, O. Järv & T. Toivonen (2021) tweetsear
 
 Also in BibTeX:
 ```
-Here be BibTeX and Zenodo DOI
+@software{Vaisanen_etal_2021,
+  author       = {Tuomas Väisänen and
+                  Seija Sirkiä and
+                  Tuomo Hiippala and
+                  Olle Järv and
+                  Tuuli Toivonen},
+  title        = {{DigitalGeographyLab/tweetsearcher: A Python tool 
+                   to download Tweets using Academic Research
+                   credentials}},
+  month        = apr,
+  year         = 2021,
+  publisher    = {Zenodo},
+  version      = {v0.1},
+  doi          = {10.5281/zenodo.4723337},
+  url          = {https://doi.org/10.5281/zenodo.4723337}
+}
 ```
 
 ## Other options
