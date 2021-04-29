@@ -10,9 +10,23 @@ tweetsearcher is a Python tool designed to download Tweets from Twitter using Ac
 This work is based on Seija Sirkiä's work in creating a collector tool that worked with Twitter's Premium API, but has been considerably rewritten to work with the current version of Twitter's searchtweets-v2 python library. It was made partly to promote open tools and open science, but there also seemed to be a need for a ready-made and (somewhat) easy-to-use tool to collect Twitter data for academic research.
 
 ## Set up
-You need to have Python 3.8 or newer installed, preferrably the [miniconda distribution of Python](https://docs.conda.io/en/latest/miniconda.html) if you want to use the environment `.yml` file.
+
+### Using the yml file
+You need to have Python 3.9 or newer installed, preferrably the [miniconda distribution of Python](https://docs.conda.io/en/latest/miniconda.html) if you want to use the environment `.yml` file.
 
 Clone this repository with `git clone https://github.com/DigitalGeographyLab/tweetsearcher.git` or download the zip file. When that's ready, we recommend you create a virtual environment and install the requirements file with `conda env create -f tweetsearcher_env.yml`.
+
+### Without the yml file
+
+* Create an environment with
+  * `conda create --name tweetsearcher`
+* Activate the environment
+  * `conda activate tweetsearcher`
+* Install packages
+  * `conda install -c conda-forge geopandas`
+  * `pip install searchtweets-v2`
+
+### Config files
 
 Create a credentials file `.twitter_keys.yaml` with a text editor of your choice, copy-paste the template below and replace the consumer key, secret and bearer token with your own:
 
