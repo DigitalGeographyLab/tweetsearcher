@@ -90,7 +90,11 @@ The csv files use semicolon (;) as the separator and utf-8 as their encoding.
 If you're not interested in what bots have to say, then you have to do the cleaning up yourself. Checking the `source` of the tweet and removing all posts from sources that seem bot-like or automated is a simple first step. There are plenty of bots posting weather data, satellite positions, every dicionary word in a given language etc. After initial bot cleaning, you can use [Botometer](https://botometer.osome.iu.edu/) to do account-specific checking for the rest (the free option has a 500 account daily quota).
 
 # Known issues
-This tool is in very early stages of development and issues can arise if downloading very small datasets.
+This tool is in very early stages of development and issues can arise if downloading very small datasets. Use the bulk option for small datasets.
+
+This tool has been tested on Linux (specifically Ubuntu 18.04 and Manjaro 21.0.3). It should also work on MacOS & Windows. FreeBSD users might be out of luck.
+
+Please report further issues and/or submit pull requests.
 
 ## Referencing
 
