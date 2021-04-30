@@ -539,6 +539,12 @@ if rstyle == 'iterative':
 # check if retrieval style if bulk
 elif rstyle == 'bulk':
     
+    # set start timestamp
+    start_ts = start_date
+        
+    # set end timestamp
+    end_ts = end_date
+    
     # payload rules for v2 api
     rule = gen_request_parameters(query = config['query'],
                                   results_per_call = config['results_per_call'],
