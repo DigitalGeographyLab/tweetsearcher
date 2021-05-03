@@ -526,7 +526,7 @@ if rstyle == 'iterative':
         outcsv = file_prefix_w_date + '.csv'
         
         # save to file
-        if args['output'] == 'pickle':
+        if args['output'] == 'pkl':
             # save to pickle
             tweetdf.to_pickle(outpickle)
         elif args['output'] == 'csv':
@@ -604,7 +604,7 @@ elif rstyle == 'bulk':
     outcsv = file_prefix_w_date + '.csv'
     
     # save to file
-    if args['output'] == 'pickle':
+    if args['output'] == 'pkl':
         # save to pickle
         tweetdf.to_pickle(outpickle)
     elif args['output'] == 'csv':
