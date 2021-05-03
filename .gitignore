@@ -130,3 +130,9 @@ dmypy.json
 
 # YAML files
 *.yaml
+
+# pickled dataframes
+*.pkl
+
+# csv files
+*.csv
