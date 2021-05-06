@@ -191,6 +191,10 @@ def coord_parse(tweets):
             # extract x and y coords
             outdf.at[i, 'geo.coordinates.x'] = row['geo.coordinates.coordinates'][0]
             outdf.at[i, 'geo.coordinates.y'] = row['geo.coordinates.coordinates'][1]
+        else:
+            outdf.at[i, 'geo.coordinates.coordinates'] = None
+            outdf.at[i, 'geo.coordinates.x'] = None
+            outdf.at[i, 'geo.coordinates.y'] = None
     
     # return output df
     return outdf
