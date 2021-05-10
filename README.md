@@ -7,7 +7,7 @@ A Python tool to download tweets using Academic Research credentials and the API
 tweetsearcher is a Python tool designed to download tweets from Twitter using Academic Research credentials. It downloads and automatically parses the json response from Twitter's API v2 saving it to a pickled dataframe. If one is inclined to do so, there's another script file included which will turn the pickled dataframes into geopackage files, commonly used in GIS.
 
 ## Why does it exist?
-This work is based on Seija Sirkiä's ([Seija's GitHub](https://github.com/seijasirkia) work in creating a collector tool that worked with Twitter's Premium API, but has been considerably rewritten to work with the current version of Twitter's searchtweets-v2 Python library. It was made partly to promote open tools and open science, but there also seemed to be a need for a ready-made and (somewhat) easy-to-use tool to collect Twitter data for academic research.
+This work is based on Seija Sirkiä's ([Seija's GitHub](https://github.com/seijasirkia)) work in creating a collector tool that worked with Twitter's Premium API, but has been considerably rewritten to work with the current version of Twitter's searchtweets-v2 Python library. It was made partly to promote open tools and open science, but there also seemed to be a need for a ready-made and (somewhat) easy-to-use tool to collect Twitter data for academic research.
 
 ## Set up
 
