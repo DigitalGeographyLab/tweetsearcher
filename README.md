@@ -1,4 +1,4 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4723336.svg)](https://doi.org/10.5281/zenodo.4723336) <a href='https://www.gnu.org/licenses/gpl-3.0.en.html ' rel='GPLv3 Licence'><img title='GNU GPLv3 Licence' align='right' src=https://www.gnu.org/graphics/gplv3-127x51.png></a>
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4767170.svg)](https://doi.org/10.5281/zenodo.4767170) <a href='https://www.gnu.org/licenses/gpl-3.0.en.html ' rel='GPLv3 Licence'><img title='GNU GPLv3 Licence' align='right' src=https://www.gnu.org/graphics/gplv3-127x51.png></a>
 
 # tweetsearcher
 A Python tool to download tweets using Academic Research credentials and the API v2 developed at [Digital Geography Lab](https://www2.helsinki.fi/en/researchgroups/digital-geography-lab). 
@@ -111,7 +111,7 @@ Please report further issues and/or submit pull requests with fixes.
 
 If you use this script in your research or project, or develop it further, please refer back to us using this:
 
-Väisänen, T., S. Sirkiä, T. Hiippala, O. Järv & T. Toivonen (2021) tweetsearcher: A Python tool for downloading tweets for academic research. DOI: 10.5281/zenodo.4723336
+Väisänen, T., S. Sirkiä, T. Hiippala, O. Järv & T. Toivonen (2021) tweetsearcher: A Python tool for downloading tweets for academic research. DOI: 10.5281/zenodo.4767170
 
 Also in BibTeX:
 ```
@@ -126,8 +126,8 @@ Also in BibTeX:
                    credentials}},
   year         = 2021,
   publisher    = {Zenodo},
-  doi          = {10.5281/zenodo.4723336},
-  url          = {https://doi.org/10.5281/zenodo.4723336}
+  doi          = {10.5281/zenodo.4767170},
+  url          = {https://doi.org/10.5281/zenodo.4767170}
 }
 ```
 
