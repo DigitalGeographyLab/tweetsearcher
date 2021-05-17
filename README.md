@@ -124,12 +124,10 @@ Also in BibTeX:
   title        = {{DigitalGeographyLab/tweetsearcher: A Python tool 
                    to download Tweets using Academic Research
                    credentials}},
-  month        = apr,
   year         = 2021,
   publisher    = {Zenodo},
-  version      = {v0.1},
-  doi          = {10.5281/zenodo.4723337},
-  url          = {https://doi.org/10.5281/zenodo.4723337}
+  doi          = {10.5281/zenodo.4723336},
+  url          = {https://doi.org/10.5281/zenodo.4723336}
 }
 ```
 
