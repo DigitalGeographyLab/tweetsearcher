@@ -1,4 +1,4 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4723336.svg)](https://doi.org/10.5281/zenodo.4723336) <img title='GNU-GPLv3 Licence' align='right' src=https://www.gnu.org/graphics/gplv3-127x51.png>
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4723336.svg)](https://doi.org/10.5281/zenodo.4723336) <a href='https://www.gnu.org/licenses/gpl-3.0.en.html ' rel='GPLv3 Licence'><img title='GNU GPLv3 Licence' align='right' src=https://www.gnu.org/graphics/gplv3-127x51.png></a>
 
 # tweetsearcher
 A Python tool to download tweets using Academic Research credentials and the API v2 developed at [Digital Geography Lab](https://www2.helsinki.fi/en/researchgroups/digital-geography-lab). 
