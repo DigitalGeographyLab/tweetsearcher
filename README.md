@@ -7,7 +7,7 @@ A Python tool to download tweets using Academic Research credentials and the API
 tweetsearcher is a Python tool designed to download tweets from Twitter using Academic Research credentials. It downloads and automatically parses the json response from Twitter's API v2 saving it to a pickled dataframe. If one is inclined to do so, there's another script file included which will turn the pickled dataframes into geopackage files, commonly used in GIS.
 
 ## Why does it exist?
-This work is based on Seija Sirkiä's ([Seija's GitHub](https://github.com/seijasirkia)) work in creating a collector tool that worked with Twitter's Premium API, but has been considerably rewritten to work with the current version of Twitter's searchtweets-v2 Python library. It was made partly to promote open tools and open science, but there also seemed to be a need for a ready-made and (somewhat) easy-to-use tool to collect Twitter data for academic research.
+This work is based on Seija Sirkiä's ([Seija's GitHub](https://github.com/seijasirkia)) work in creating a collector tool that worked with Twitter's Premium API, but has been considerably rewritten to work with the current version of Twitter's [searchtweets-v2](https://github.com/twitterdev/search-tweets-python/tree/v2) Python library. It was made partly to promote open tools and open science, but there also seemed to be a need for a ready-made and (somewhat) easy-to-use tool to collect Twitter data for academic research.
 
 ## Requirements
 
@@ -23,7 +23,7 @@ This work is based on Seija Sirkiä's ([Seija's GitHub](https://github.com/seija
 ## Set up
 
 ### Using the yml file
-You need to have Python 3.9 or newer installed, preferrably the [miniconda distribution of Python](https://docs.conda.io/en/latest/miniconda.html) if you want to use the environment `.yml` file.
+You need to have Python 3.9 or newer installed, preferrably the Anaconda/miniconda distribution of Python if you want to use the environment `.yml` file.
 
 Clone this repository with `git clone https://github.com/DigitalGeographyLab/tweetsearcher.git` or download the zip file. When that's ready, we recommend you create a virtual environment and install the requirements file with `conda env create -f tweetsearcher_env.yml`.
 
@@ -39,7 +39,7 @@ Clone this repository with `git clone https://github.com/DigitalGeographyLab/twe
 
 ### Config files
 
-Create a credentials file `.twitter_keys.yaml` with a text editor of your choice, copy-paste the template below and replace the consumer key, secret and bearer token with your own:
+Create a credentials file `.twitter_keys.yaml` with a text editor of your choice, copy-paste the template below and replace the consumer key, secret and bearer token with your own, and place it in the directory of the repository:
 
 ```
 search_tweets_v2:
@@ -49,7 +49,7 @@ search_tweets_v2:
   bearer_token: <BEARER_TOKEN>
 ```
 
-and create the search parameters file `search_config.yaml` with a text editor of your choice and replace the values with ones you want. For more specific instructions on how to build a search query see Twitter's documentation: https://developer.twitter.com/en/docs/twitter-api/tweets/search/integrate/build-a-query
+and create the search parameters file `search_config.yaml` with a text editor of your choice, replace the values with ones you want, and place it in the directory of the repository. For more specific instructions on how to build a search query see Twitter's documentation: https://developer.twitter.com/en/docs/twitter-api/tweets/search/integrate/build-a-query
 
 ```
 search_rules:
@@ -71,24 +71,24 @@ For example: The above search config file would search for tweets mentioning sno
 
 Then just navigate to the cloned repository directory on your local machine and type:
 ```
-python v2_tweets_to_file.py -sd 2020-01-28 -ed 2020-05-29 -o pkl -w 45 -s iterative
+python v2_tweets_to_file.py -sd 2020-04-28 -ed 2020-05-29 -o pkl -w 45 -s iterative
 ```
 and you after a while you should start accumulating pickled dataframes (`.pkl` files) one per date, so if you're requesting a full year then you'll be getting 365 files. `iterative` style is good for queries returning large amounts of tweets for each day (e.g. all geotagged tweets within Finland). For queries returning small per-day tweet amounts use `bulk` style by typing:
 
 ```
-python v2_tweets_to_file.py -sd 2020-01-28 -ed 2020-05-29 -o pkl -s bulk
+python v2_tweets_to_file.py -sd 2020-05-27 -ed 2020-05-29 -o pkl -s bulk
 ```
-and you will get just one `.pkl` file. Please note that this `bulk` option is suitable for only queries where there might be very few tweets per day.
+and you will get just one `.pkl` file. Please note that this `bulk` option is suitable for only queries where there might be very few tweets per day such as a very specific topic or from a few specific accounts. Using `bulk` option on a larger dataset will quickly hit the Twitter rate limit.
 
 Output files by default are pickled pandas dataframes(`.pkl`). They can be read into Python with [Pandas](https://pandas.pydata.org/) library for further processing. Saving to `.csv` files is also supported, but some fields containing data types like `list` and `dict` objects will be converted to plaintext. The flags stand for `sd` = start date, `ed` = end date, `o` = output file format, `w` = wait time in seconds (only for `iterative` style), and `s` = style. Wait time is there to be used if you think you're going to hit the Twitter rate limits when downloading tweets with `iterative`, for example when downloading a full year of geotagged tweets from Finland. *Please note that the end time date **IS NOT** collected, the collection stops at 23:59:59 the previous date, in the example case on the 28th of May at 23:59:59*.
 
-If you downloaded with `iterative` style, you might want to combine the pickled dataframes to one big file. You can do this with `combine_tweets.py`. It supports saving to a [GeoPackage](https://www.geopackage.org/) file (a common spatial file format like shapefile), a pickled Pandas dataframe and a plain csv file. Combining tweest from `.csv` files hasn't been implemented. To combine tweets run the following command in the directory where you have the `.pkl` files:
+If you downloaded with `iterative` style, you might want to combine the pickled dataframes to one big file. You can do this with `combine_tweets.py`. It supports saving to a [GeoPackage](https://www.geopackage.org/) file (a common spatial file format like shapefile), a pickled Pandas dataframe and a plain csv file. Combining tweets from `.csv` files hasn't been implemented yet as `csv` files do not retain data types. To combine tweets run the following command in the directory where you have the `.pkl` files:
 
 ```
 python combine_tweets.py -f gpkg -o my_tweets.gpkg
 ```
 
-The script outputs a geopackage file `my_tweets.gpkg` in the WGS-84 crs, which you can open in QGIS and other GIS software like ArcGIS. Other supported outputs are `.pkl` and `.csv` files. Combining tweets works only from `.pkl` files.
+The above command outputs a geopackage file `my_tweets.gpkg` in the WGS-84 coordinate reference system (if it contains geotagged tweets), which you can open in QGIS and other GIS software like ArcGIS. Other supported outputs are `.pkl` and `.csv` files. Combining tweets works only from `.pkl` files.
 
 ## Notes on the output
 
