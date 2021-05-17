@@ -6,8 +6,9 @@ Created on Mon May 17 09:43:17 2021
 INFO
 ####
 
-This file contains untility functions for tweetsearcher A Python tool to
-download tweets using Academic Research credentials and the Twitter API v2.
+This file contains untility functions for tweetsearcher A Python tool for
+downloading tweets using for academic research. The script works with Twitter's
+Academic Research product track credentials and the Twitter API v2.
 
 
 USAGE
