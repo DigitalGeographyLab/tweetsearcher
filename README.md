@@ -9,6 +9,17 @@ tweetsearcher is a Python tool designed to download tweets from Twitter using Ac
 ## Why does it exist?
 This work is based on Seija Sirkiä's ([Seija's GitHub](https://github.com/seijasirkia)) work in creating a collector tool that worked with Twitter's Premium API, but has been considerably rewritten to work with the current version of Twitter's searchtweets-v2 Python library. It was made partly to promote open tools and open science, but there also seemed to be a need for a ready-made and (somewhat) easy-to-use tool to collect Twitter data for academic research.
 
+## Requirements
+
+* Python 3
+  * Instructions are written for Anaconda/miniconda Python distributions
+    * [Miniconda](https://docs.conda.io/en/latest/miniconda.html) is light, small, and minimal
+    * [Anaconda](https://www.anaconda.com/products/individual) comes with (nearly) everything and the kitchen sink
+  * If you're on pure Python use `pip` to install everything and `venv` for the virtual environments
+* Willingness to use the commandline
+  * Any terminal application for Linux/MacOS
+  * PowerShell or Command prompt for Windows
+
 ## Set up
 
 ### Using the yml file
@@ -92,9 +103,9 @@ If you're not interested in what bots have to say, then you have to do the clean
 # Known issues
 This tool is in very early stages of development and issues can arise if downloading very small datasets. Use the bulk option for small datasets.
 
-This tool has been tested on Linux (specifically Ubuntu 18.04 and Manjaro 21.0.3). It should also work on MacOS & Windows. FreeBSD users might be out of luck.
+This tool has been tested on Linux (specifically Ubuntu 18.04, 20.04 and Manjaro 21.0.3). Confirmed to work on MacOS Catalina+ and Windows 10, FreeBSD should work too.
 
-Please report further issues and/or submit pull requests.
+Please report further issues and/or submit pull requests with fixes.
 
 ## Referencing
 
