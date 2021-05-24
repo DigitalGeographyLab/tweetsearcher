@@ -122,7 +122,7 @@ Also in BibTeX:
                   Olle Järv and
                   Tuuli Toivonen},
   title        = {{DigitalGeographyLab/tweetsearcher: A Python tool 
-                   to download Tweets using Academic Research
+                   for downloading Tweets using Academic Research
                    credentials}},
   year         = 2021,
   publisher    = {Zenodo},
