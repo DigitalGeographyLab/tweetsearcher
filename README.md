@@ -1,10 +1,10 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4767170.svg)](https://doi.org/10.5281/zenodo.4767170) <a href='https://www.gnu.org/licenses/gpl-3.0.en.html ' rel='GPLv3 Licence'><img title='GNU GPLv3 Licence' align='right' src=https://www.gnu.org/graphics/gplv3-127x51.png></a>
 
 # tweetsearcher
-A Python tool to download tweets using Academic Research credentials and the API v2 developed at [Digital Geography Lab](https://www2.helsinki.fi/en/researchgroups/digital-geography-lab). 
+A Python tool for downloading tweets with Academic Research credentials and the API v2 developed at [Digital Geography Lab](https://www2.helsinki.fi/en/researchgroups/digital-geography-lab). 
 
 ## What does it do?
-tweetsearcher is a Python tool designed to download tweets from Twitter using Academic Research credentials. It downloads and automatically parses the json response from Twitter's API v2 saving it to a pickled dataframe. If one is inclined to do so, there's another script file included which will turn the pickled dataframes into geopackage files, commonly used in GIS.
+tweetsearcher is a Python tool designed for downloading tweets from Twitter with Academic Research credentials. It downloads and automatically parses the json response from Twitter's API v2 saving it to a pickled dataframe. If one is inclined to do so, there's another script file included which will turn the pickled dataframes into geopackage files, commonly used in GIS.
 
 ## Why does it exist?
 This work is based on Seija Sirkiä's ([Seija's GitHub](https://github.com/seijasirkia)) work in creating a collector tool that worked with Twitter's Premium API, but has been considerably rewritten to work with the current version of Twitter's [searchtweets-v2](https://github.com/twitterdev/search-tweets-python/tree/v2) Python library. It was made partly to promote open tools and open science, but there also seemed to be a need for a ready-made and (somewhat) easy-to-use tool to collect Twitter data for academic research.
