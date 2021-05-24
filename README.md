@@ -23,7 +23,7 @@ This work is based on Seija Sirkiä's ([Seija's GitHub](https://github.com/seija
 ## Set up
 
 ### Using the yml file
-You need to have Python 3.9 or newer installed, preferrably the Anaconda/miniconda distribution of Python if you want to use the environment `.yml` file.
+You need to have Python 3 installed, preferrably 3.9 or newer for the Anaconda/miniconda distribution of Python if you want to use the environment `.yml` file.
 
 Clone this repository with `git clone https://github.com/DigitalGeographyLab/tweetsearcher.git` or download the zip file. When that's ready, we recommend you create a virtual environment and install the requirements file with `conda env create -f tweetsearcher_env.yml`.
 
