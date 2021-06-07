@@ -164,11 +164,28 @@ if rstyle == 'iterative':
                           max_tweets = config['max_tweets'],
                           **search_creds)
         
-        # indicate which day is getting retrieved
-        print('[INFO] - Retrieving tweets from ' + str(start_ts))
-    
-        # get json response to list
-        tweets = list(rs.stream())
+        # number of reconnection tries
+        tries = 10
+        
+        # while loop to protect against 104 error
+        while True:
+            tries -= 1
+            # attempt retrieving tweets
+            try:
+                # indicate which day is getting retrieved
+                print('[INFO] - Retrieving tweets from ' + str(start_ts))
+            
+                # get json response to list
+                tweets = list(rs.stream())
+                
+                # break free from while loop
+                break
+            except Exception as err:
+                if tries == 0:
+                    raise err
+                else:
+                    print('[INFO] - Got connection error, waiting 15 seconds and trying again. ' + str(tries) + ' tries left.')
+                    time.sleep(15)
         
         # parse results to dataframe
         print('[INFO] - Parsing tweets from ' + str(start_ts))
@@ -242,11 +259,29 @@ elif rstyle == 'bulk':
                       max_tweets = config['max_tweets'],
                       **search_creds)
     
-    # indicate which day is getting retrieved
-    print('[INFO] - Retrieving tweets from ' + str(start_ts))
+    # number of reconnection tries
+    tries = 10
     
-    # get json response to list
-    tweets = list(rs.stream())
+    # while loop to protect against 104 error
+    while True:
+        tries -= 1
+        
+        # attempt retrieving tweets
+        try:
+            # indicate which day is getting retrieved
+            print('[INFO] - Retrieving tweets from ' + str(start_ts))
+        
+            # get json response to list
+            tweets = list(rs.stream())
+            
+            # break free from while loop
+            break
+        except Exception as err:
+            if tries == 0:
+                raise err
+            else:
+                print('[INFO] - Got connection error, waiting 15 seconds and trying again. ' + str(tries) + ' tries left.')
+                time.sleep(15)
     
     # parse results to dataframe
     print('[INFO] - Parsing tweets from ' + str(start_ts))
