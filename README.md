@@ -35,7 +35,7 @@ Clone this repository with `git clone https://github.com/DigitalGeographyLab/twe
   * `conda activate tweetsearcher`
 * Install packages
   * `conda install -c conda-forge geopandas`
-  * `pip install searchtweets-v2`
+  * `pip install searchtweets-v2==1.0.7`
 
 ### Config files
 
