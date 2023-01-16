@@ -118,7 +118,7 @@ config = read_config('search_config.yaml')
 tweetfields = ",".join(["attachments", "author_id", "conversation_id", "created_at",
                         "entities", "geo", "id", "in_reply_to_user_id", "lang",
                         "public_metrics", "possibly_sensitive", "referenced_tweets",
-                        "reply_settings", "source", "text", "withheld",])
+                        "reply_settings", "text", "withheld",])
 userfields = ",".join(["created_at", "description", "entities", "location",
                        "name", "profile_image_url", "protected", "public_metrics",
                        "url", "username", "verified", "withheld"])
@@ -194,8 +194,8 @@ if rstyle == 'iterative':
         # try to order columns semantically
         try:
             tweetdf = tweetdf[['id', 'author_id', 'created_at', 'reply_settings', 'conversation_id',
-                               'source', 'in_reply_to_user_id', 'text', 'possibly_sensitive',
-                               'lang', 'referenced_tweets', 'referenced_tweets.id', 
+                               'in_reply_to_user_id', 'text', 'possibly_sensitive',
+                               'lang', 'referenced_tweets', 'referenced_tweets.id',
                                'referenced_tweets.author_id', 'referenced_tweets.type',
                                'public_metrics.retweet_count', 'public_metrics.reply_count',
                                'public_metrics.like_count', 'public_metrics.quote_count',
@@ -269,7 +269,7 @@ elif rstyle == 'bulk':
         # attempt retrieving tweets
         try:
             # indicate which day is getting retrieved
-            print('[INFO] - Retrieving tweets from ' + str(start_ts))
+            print('[INFO] - Retrieving tweets between ' + str(start_ts) + ' and ' + str(end_ts))
         
             # get json response to list
             tweets = list(rs.stream())
@@ -284,13 +284,13 @@ elif rstyle == 'bulk':
                 time.sleep(15)
     
     # parse results to dataframe
-    print('[INFO] - Parsing tweets from ' + str(start_ts))
+    print('[INFO] - Parsing collected tweets from ' + str(start_ts) + ' to ' + str(end_ts))
     tweetdf = v2parser(tweets, config['results_per_call'])
     
     # try to order columns semantically
     try:
         tweetdf = tweetdf[['id', 'author_id', 'created_at', 'reply_settings', 'conversation_id',
-                           'source', 'in_reply_to_user_id', 'text', 'possibly_sensitive',
+                           'in_reply_to_user_id', 'text', 'possibly_sensitive',
                            'lang', 'referenced_tweets', 'referenced_tweets.id', 
                            'referenced_tweets.author_id', 'referenced_tweets.type',
                            'public_metrics.retweet_count', 'public_metrics.reply_count',
