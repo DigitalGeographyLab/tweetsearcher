@@ -56,6 +56,15 @@ The bounding box coordinates in the query require only two (2) coordinate pairs
 first representing southwest corner of the bounding box, then northeast corner.
 The CRS is basic WGS-84 in decimal degrees.
 
+This script assumes you have created the bounding box with MMQGIS plugin in QGIS.
+
+
+### SYDNEY SPECIFIC ###
+No geotagged tweets before 01.09.2010
+
+Collection ends February 1st 2023
+12 years 5 months = 
+
 @author: Tuomas Väisänen & Seija Sirkiä
 """
 
@@ -81,20 +90,15 @@ ap.add_argument("-ed", "--enddate", required=True,
                 help="End date of the collection in the following form: "
                 " YEAR-MO-DA for example 2018-02-18")
 
-# get save format
-ap.add_argument("-o", "--output", required=True, default='pkl',
-                help="Output file format, valid options are either pkl or csv. "
-                "Default: pkl")
-
-# get retrieval style
-ap.add_argument("-s", "--style", required=True, default='iterative',
-                help="Set retrieve style. Options: bulk or iterative. Bulk collects "
-                "tweets to one big file. Iterative collects each day separately")
-
 # get wait time
 ap.add_argument("-w", "--wait", required=False, default=45,
                 help="Set wait time between requests to avoid Twitter rate limits. "
                 "Default: 45")
+
+# get interval
+ap.add_argument("-in", "--interval", required=True, default=1,
+                help="Set date intervals to avoid rate limits with popular areas. "
+                "Default: 1, which is no intervals but everything all at once.")
 
 # get bounding box geopackage
 ap.add_argument("-b", "--bbox", required=True,
@@ -103,11 +107,10 @@ ap.add_argument("-b", "--bbox", required=True,
 # Parse arguments
 args = vars(ap.parse_args())
 
-# get waittime
+# get waittime and interval
 waittime = int(args['wait'])
+interval = int(args['interval'])
 
-# get retrieval style
-rstyle = args['style']
 
 # check if output filetypes are valid
 if args['output'] == 'pkl':
@@ -151,96 +154,137 @@ expansions = ",".join(["attachments.media_keys", "author_id", "entities.mentions
                        "geo.place_id", "in_reply_to_user_id", "referenced_tweets.id",
                        "referenced_tweets.id.author_id"])
 
-# set interval to loop through
+# get date interval
 start_date = args['startdate'].date()
 end_date = args['enddate'].date()
 
-for bbox in bbox_df.iterrows():
-    
-    # extract southwest corner coordinate points
-    
-    # extract northeast corner coordinate points
-    
-    
+# get the amount of time per date intervals for looping
+diff = (end_date - start_date) / interval
 
-# payload rules for v2 api
-rule = gen_request_parameters(query = search_config['query'],
-                              results_per_call = search_config['results_per_call'],
-                              start_time = start_date.isoformat(),
-                              end_time = end_date.isoformat(),
-                              tweet_fields = tweetfields,
-                              user_fields = userfields,
-                              media_fields = mediafields,
-                              place_fields = placefields,
-                              expansions = expansions,
-                              stringify = False)
-
-# result stream from twitter v2 api
-rs = ResultStream(request_parameters = rule,
-                  max_results=100000,
-                  max_pages=1,
-                  max_tweets = search_config['max_tweets'],
-                  **twitter_creds)
-
-# number of reconnection tries
-tries = 10
-
-# while loop to protect against 104 error
-while True:
-    tries -= 1
+# loop over date intervals
+for intv in range(interval):
     
-    # attempt retrieving tweets
-    try:
-        # indicate which day is getting retrieved
-        print('[INFO] - Retrieving tweets between ' + str(start_date) + ' and ' + str(end_date))
+    # get interval start date
+    intstart = start_date + diff * intv
     
-        # get json response to list
-        tweets = list(rs.stream())
+    # get interval end index
+    intend_ix = intv + 1
+    
+    # get interval end date
+    intend = start_date + diff * intend_ix
+    
+    # print message about which interval is collected
+    print('[INFO] - Starting tweet collection between ' + str(intstart) + ' - ' + str(intend))
+    
+    # empty tweet list for current interval
+    tweets_interval = []
+    
+    # loop over bounding boxes
+    for i, bbox in bbox_df.iterrows():
         
-        # break free from while loop
-        break
-    except Exception as err:
-        if tries == 0:
-            raise err
-        else:
-            print('[INFO] - Got connection error, waiting 15 seconds and trying again. ' + str(tries) + ' tries left.')
-            time.sleep(15)
-
-# parse results to dataframe
-print('[INFO] - Parsing collected tweets from ' + str(start_date) + ' to ' + str(end_date))
-tweetdf = v2parser(tweets, search_config['results_per_call'])
-
-# try to order columns semantically
-try:
-    tweetdf = tweetdf[['id', 'author_id', 'created_at', 'conversation_id',
-                       'in_reply_to_user_id', 'text', 'lang',
-                       'public_metrics.retweet_count',
-                       'public_metrics.reply_count', 'public_metrics.like_count',
-                       'public_metrics.quote_count', 'user.location',
-                       'user.created_at', 'user.username',
-                       'user.public_metrics.followers_count',
-                       'user.public_metrics.following_count',
-                       'user.public_metrics.tweet_count',
-                       'geo.place_id', 'geo.coordinates.type',
-                       'geo.coordinates.coordinates',
-                       'geo.coordinates.x', 'geo.coordinates.y', 'geo.full_name',
-                       'geo.name', 'geo.place_type', 'geo.country',
-                       'geo.country_code', 'geo.type', 'geo.bbox',
-                       'geo.centroid', 'geo.centroid.x', 'geo.centroid.y']]
-except:
-    pass
-
-# set up file prefix from config
-file_prefix_w_date = search_config['filename_prefix'] + start_date.isoformat()
-outpickle = file_prefix_w_date + '.pkl'
-outcsv = file_prefix_w_date + '.csv'
-
-# save to file
-if args['output'] == 'pkl':
-    # save to pickle
-    tweetdf.to_pickle(outpickle)
-elif args['output'] == 'csv':
-    # save to csv
-    tweetdf.to_csv(outcsv, sep=';', encoding='utf-8')
+        # extract southwest corner coordinate points
+        west = bbox['left']
+        south = bbox['bottom']
+        
+        # extract northeast corner coordinate points
+        north = bbox['top']
+        east = bbox['right']
+        
+        # form the search query based on bounding box southwest and northeast corner coordinates
+        search_q = f'bounding_box:[{west:.5f} {south:.5f} {east:.5f} {north:.5f}]'
+    
+        # generate payload rules for v2 api
+        rule = gen_request_parameters(query = search_q,
+                                      results_per_call = search_config['results_per_call'],
+                                      start_time = intstart.isoformat(),
+                                      end_time = intend.isoformat(),
+                                      tweet_fields = tweetfields,
+                                      user_fields = userfields,
+                                      media_fields = mediafields,
+                                      place_fields = placefields,
+                                      expansions = expansions,
+                                      stringify = False)
+        
+        # initiate result stream from twitter v2 api
+        rs = ResultStream(request_parameters = rule,
+                          max_results=100000,
+                          max_pages=1,
+                          max_tweets = search_config['max_tweets'],
+                          **twitter_creds)
+    
+        # number of reconnection tries
+        tries = 10
+        
+        # while loop to protect against 104 error
+        while True:
+            tries -= 1
+            
+            # attempt retrieving tweets
+            try:
+                # indicate which day is getting retrieved
+                print('[INFO] - Searching for tweets between ' + str(intstart) + ' and ' + str(intend) + ' from bounding box ' + str(i))
+            
+                # get json response to list
+                tweets = list(rs.stream())
+                
+                # print response
+                print('[INFO] - Got {} tweets from bounding box {}'.format(str(len(tweets)), str(i)))
+                
+                #  wait 6 seconds to avoid request bombing in case of zero or a few tweets
+                time.sleep(6)
+                
+                # break free from while loop
+                break
+            
+            # catch exceptions
+            except Exception as err:
+                if tries == 0:
+                    raise err
+                else:
+                    print('[INFO] - Got connection error, waiting 15 seconds and trying again. ' + str(tries) + ' tries left.')
+                    time.sleep(15)
+        
+        # extend current interval tweet list with tweets from current bounding box
+        tweets_interval.extend(tweets)
+        
+    # check if there are results
+    if len(tweets_interval) != 0:
+    
+        # parse results to dataframe
+        print('[INFO] - Parsing collected tweets from ' + str(intstart) + ' to ' + str(intend))
+        tweetdf = v2parser(tweets_interval, search_config['results_per_call'])
+    
+        # try to order columns semantically
+        try:
+            tweetdf = tweetdf[['id', 'author_id', 'created_at', 'conversation_id',
+                               'in_reply_to_user_id', 'text', 'lang',
+                               'public_metrics.retweet_count',
+                               'public_metrics.reply_count', 'public_metrics.like_count',
+                               'public_metrics.quote_count', 'user.location',
+                               'user.created_at', 'user.username',
+                               'user.public_metrics.followers_count',
+                               'user.public_metrics.following_count',
+                               'user.public_metrics.tweet_count',
+                               'geo.place_id', 'geo.coordinates.type',
+                               'geo.coordinates.coordinates',
+                               'geo.coordinates.x', 'geo.coordinates.y', 'geo.full_name',
+                               'geo.name', 'geo.place_type', 'geo.country',
+                               'geo.country_code', 'geo.type', 'geo.bbox',
+                               'geo.centroid', 'geo.centroid.x', 'geo.centroid.y']]
+        except:
+            
+            pass
+        
+        # set up file prefix from config
+        file_prefix_w_date = search_config['filename_prefix'] + '_' + str(start_date) + '---' + str(end_date)
+        outpickle = file_prefix_w_date + '_part' + str(intv) + '.pkl'
+        
+        # save to pickle
+        tweetdf.to_pickle('GIS/sydney/pickles/' + outpickle)
+       
+    else:
+        # print message and move to next bbox
+        print('[INFO] - No geotagged tweets in bounding boxes between {} and {}. Moving on...'.format(str(start_date), str(end_date)))
+        pass
 
 print('[INFO] - ... done!')
