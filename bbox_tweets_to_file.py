@@ -103,7 +103,8 @@ ap.add_argument("-in", "--interval", required=True, default=1,
 
 # get bounding box geopackage
 ap.add_argument("-b", "--bbox", required=True,
-                help="Path to bounding box geopackage.")
+                help="Path to bounding box geopackage. For example: "
+                "~/Data/project/bbox.gpkg")
 
 # Parse arguments
 args = vars(ap.parse_args())
