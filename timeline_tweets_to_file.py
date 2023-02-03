@@ -6,12 +6,10 @@ Created on Fri Apr  9 11:04:24 2021
 INFO
 ####
 
-This script downloads Tweets from the full archive of Twitter using the academic
-access API. It downloads tweets one day at a time to reduce chance of hitting
-rate limits from the API and saves them as a pickled dataframe (.pkl).
+This script downloads Tweets of users from the full archive of Twitter using the academic
+access API. It downloads all tweets per user from the given time range and saves
+the results on a user-by-user basis.
 
-To construtct a GIS file out of them, please run the tweets_to_gpkg.py in the
-folder containing the pickled dataframe files (.pkl files)
 
 REQUIREMENTS
 ############
@@ -26,26 +24,22 @@ Installed:
     Python packages:
         searchtweetsv2
         pandas
-        geopandas
 
 USAGE
 #####
 
 Run the script by typing:
     
-    python v2_tweets_to_file.py -sd YEAR-MO-DA -ed YEAR-MO-DA
+    python timeline_tweets_to_file.py -ul /path/to/list.csv -sd YEAR-MO-DA -ed YEAR-MO-DA -o pkl
 
 Replace YEAR with the year you want, MO with the month you want and DA with the
-day of the month you want. For example:
-    
-    python v2_tweets_to_file.py -sd 2015-06-15 -ed 2019-06-15
+day of the month you want.
 
 NOTE
 ####
 
 The collector collects tweets starting from 00:00 hours on the starting day and
-ends the collection on 23:59:59 on the day before the end date. In the example
-above the last collected day would be 2019-06-14.
+ends the collection on 23:59:59 on the day before the end date.
 
 @author: Tuomas Väisänen & Seija Sirkiä
 """
@@ -82,28 +76,25 @@ ap.add_argument("-o", "--output", required=True, default='pkl',
                 help="Output file format, valid options are either pkl or csv. "
                 "Default: pkl")
 
-# get wait time
-ap.add_argument("-w", "--wait", required=False, default=45,
-                help="Set wait time between requests to avoid Twitter rate limits. "
-                "Default: 45")
-
 # Parse arguments
 args = vars(ap.parse_args())
-
-# get waittime
-waittime = int(args['wait'])
 
 # get retrieval style
 rstyle = args['style']
 
 # check if output filetypes are valid
 if args['output'] == 'pkl':
+    
     # save to pickle
     print('[INFO] - Output file set to pickle')
+    
 elif args['output'] == 'csv':
+    
     # save to csv
     print('[INFO] - Output file set to csv')
+    
 else:
+    
     print('[INFO] - Invalid output file! Valid options are pickle or csv. Exiting...')
     exit
 
@@ -144,7 +135,7 @@ for user in users:
     
     # form search query per user and rule out retweets, replies and quote tweets
     search_q = 'from:{} -is:retweet -is:reply -is:quote'.format(user)
-    search_q = 'from:{}'.format(user)
+    
     # payload rules for v2 api
     rule = gen_request_parameters(query = search_q,
                                   results_per_call = config['results_per_call'],
