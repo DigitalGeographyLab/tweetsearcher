@@ -74,6 +74,7 @@ from datetime import datetime, timedelta
 import geopandas as gpd
 import time
 import argparse
+import gc
 
 # Set up the argument parser
 ap = argparse.ArgumentParser()
@@ -111,25 +112,11 @@ args = vars(ap.parse_args())
 waittime = int(args['wait'])
 interval = int(args['interval'])
 
-
-# check if output filetypes are valid
-if args['output'] == 'pkl':
-    # save to pickle
-    print('[INFO] - Output file set to pickle')
-elif args['output'] == 'csv':
-    # save to csv
-    print('[INFO] - Output file set to csv')
-else:
-    print('[INFO] - Invalid output file! Valid options are pickle or csv. Exiting...')
-    exit
-
 # load bounding box
 bbox_df = gpd.read_file(args['bbox'], driver='GPKG')
 
 # get bbox order
 bbox_df = bbox_df.assign(row_number=range(len(bbox_df)))
-
-# get corner coordinates df
 
 # load twitter keys
 twitter_creds = load_credentials('.twitter_keys.yaml',
@@ -247,6 +234,12 @@ for intv in range(interval):
         # extend current interval tweet list with tweets from current bounding box
         tweets_interval.extend(tweets)
         
+        # run garbage collector to free some memory
+        gc.collect()
+    
+    # collect loose garbage
+    gc.collect()
+    
     # check if there are results
     if len(tweets_interval) != 0:
     
@@ -281,7 +274,10 @@ for intv in range(interval):
         
         # save to pickle
         tweetdf.to_pickle('GIS/sydney/pickles/' + outpickle)
-       
+        
+        # collect loose garbage to free memory
+        gc.collect()
+        
     else:
         # print message and move to next bbox
         print('[INFO] - No geotagged tweets in bounding boxes between {} and {}. Moving on...'.format(str(start_date), str(end_date)))
