@@ -357,6 +357,9 @@ def v2parser(tweets, maxcalls):
         outdf = outdf.drop(columns=['attachments.poll_ids'])
     except:
         print('[INFO] - No poll ids found')
+        
+    # print full length of dataframe
+    print('[INFO] - Dataframe size ' + str(len(outdf)) + ' tweets.')
 
     # give the output back
     return outdf

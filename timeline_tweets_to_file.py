@@ -79,9 +79,6 @@ ap.add_argument("-o", "--output", required=True, default='pkl',
 # Parse arguments
 args = vars(ap.parse_args())
 
-# get retrieval style
-rstyle = args['style']
-
 # check if output filetypes are valid
 if args['output'] == 'pkl':
     

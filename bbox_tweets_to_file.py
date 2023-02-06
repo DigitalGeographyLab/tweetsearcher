@@ -218,9 +218,17 @@ for intv in range(interval):
                 # print response
                 print('[INFO] - Got {} tweets from bounding box {}'.format(str(len(tweets)), str(i)))
                 
-                #  wait 6 seconds to avoid request bombing in case of zero or a few tweets
-                time.sleep(6)
-                
+                # check if size warrants shorter or longer wait time
+                if len(tweets) < 500:
+                    
+                    # wait 6 seconds to avoid request bombing in case of zero or a few tweets
+                    time.sleep(6)
+                    
+                else:
+                    
+                    # wait a bit longer
+                    time.sleep(18)
+                    
                 # break free from while loop
                 break
             
