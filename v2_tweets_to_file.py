@@ -82,9 +82,9 @@ ap.add_argument("-s", "--style", required=True, default='iterative',
                 "tweets to one big file. Iterative collects each day separately")
 
 # get wait time
-ap.add_argument("-w", "--wait", required=False, default=45,
+ap.add_argument("-w", "--wait", required=False, default=15,
                 help="Set wait time between requests to avoid Twitter rate limits. "
-                "Default: 45")
+                "Default: 15")
 
 # Parse arguments
 args = vars(ap.parse_args())
@@ -184,8 +184,8 @@ if rstyle == 'iterative':
                 if tries == 0:
                     raise err
                 else:
-                    print('[INFO] - Got connection error, waiting 15 seconds and trying again. ' + str(tries) + ' tries left.')
-                    time.sleep(15)
+                    print('[INFO] - Got connection error, waiting ' + str(waittime) + ' seconds and trying again. ' + str(tries) + ' tries left.')
+                    time.sleep(waittime)
         
         # parse results to dataframe
         print('[INFO] - Parsing tweets from ' + str(start_ts))
@@ -229,6 +229,7 @@ if rstyle == 'iterative':
             tweetdf.to_csv(outcsv, sep=';', encoding='utf-8')
         
         # sleeps to not hit request limit so soon
+        print('[INFO] - Waiting for ' + str(waittime) + ' seconds before collecting next date..')
         time.sleep(waittime)
 
 # check if retrieval style if bulk
@@ -280,8 +281,8 @@ elif rstyle == 'bulk':
             if tries == 0:
                 raise err
             else:
-                print('[INFO] - Got connection error, waiting 15 seconds and trying again. ' + str(tries) + ' tries left.')
-                time.sleep(15)
+                print('[INFO] - Got connection error, waiting ' + str(waittime) + ' seconds and trying again. ' + str(tries) + ' tries left.')
+                time.sleep(waittime)
     
     # parse results to dataframe
     print('[INFO] - Parsing collected tweets from ' + str(start_ts) + ' to ' + str(end_ts))

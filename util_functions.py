@@ -359,7 +359,7 @@ def v2parser(tweets, maxcalls):
         print('[INFO] - No poll ids found')
         
     # print full length of dataframe
-    print('[INFO] - Dataframe size ' + str(len(outdf)) + ' tweets.')
+    print('[INFO] - Dataframe size: ' + str(len(outdf)) + ' tweets.')
 
     # give the output back
     return outdf

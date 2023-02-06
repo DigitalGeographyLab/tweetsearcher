@@ -8,7 +8,8 @@ INFO
 
 This script downloads Tweets of users from the full archive of Twitter using the academic
 access API. It downloads all tweets per user from the given time range and saves
-the results on a user-by-user basis.
+the results on a user-by-user basis. Please note the user list csv has to have the column
+name usr_id
 
 
 REQUIREMENTS
@@ -167,9 +168,17 @@ for user in users:
             # get json response to list
             tweets = list(rs.stream())
             
-            # wait for 7 seconds to not hit rate limits if zero tweets
-            time.sleep(7)
-            
+            # add check to adjust wait time
+            if len(tweets) < 500:
+                    
+                # wait for 7 seconds to not hit rate limits if zero tweets
+                time.sleep(7)
+                
+            else:
+                
+                # wait a bit longer
+                time.sleep(18)
+                
             # break free from while loop
             break
         except Exception as err:
