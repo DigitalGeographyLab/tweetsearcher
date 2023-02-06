@@ -10,10 +10,13 @@ This script downloads Tweets from the full archive of Twitter using the academic
 access API. It downloads geotagged tweets based on a list of bounding boxes.
 The outputs are saved as a pickled dataframe (.pkl).
 
-The bounding boxes can not be larger than 25 miles by 25miles or Twitter API
-will not process the request. Matches against the place.geo.coordinates
-object of the Tweet when present, and in Twitter, against a place geo polygon,
-where the place polygon is fully contained within the defined region.
+The bounding boxes can not be larger than 25 miles by 25 miles or Twitter API
+will not process the request. Please only use WGS-84 coordinates.
+
+Matches against the place.geo.coordinates object of the Tweet when present,
+and in Twitter, against a place geo polygon, where the place polygon is fully
+contained within the defined region. So, you are more likely to get
+coordinate-tagged than place-tagged content with this approach.
 
 To construtct a GIS file out of them, please run the tweets_to_gpkg.py in the
 folder containing the pickled dataframe files (.pkl files)
@@ -24,6 +27,7 @@ REQUIREMENTS
 Files:
     .twitter_keys.yaml in the script directory
     premsearch_config.yaml in the script directory
+    a bounding box grid geopackage file created with mmqgis plugin in QGIS.
 
 Installed:
     Python 3.8 or newer
@@ -38,12 +42,17 @@ USAGE
 
 Run the script by typing:
     
-    python v2_tweets_to_file.py -sd YEAR-MO-DA -ed YEAR-MO-DA
+    python bbox_tweets_to_file.py -sd YEAR-MO-DA -ed YEAR-MO-DA -w 15 -in 20 -b /path/to/bbox.gpkg -o path/to/results/
 
 Replace YEAR with the year you want, MO with the month you want and DA with the
-day of the month you want. For example:
-    
-    python v2_tweets_to_file.py -sd 2015-06-15 -ed 2019-06-15
+day of the month you want.
+
+Interval represents the number of divisions for the time period, as for popular
+areas it makes no sense to collect all tweets from 2009 to 2023 in one go:
+rate limits are exceeded instantly. Collect 1,2 or 3 weeks/months/yearsat a time
+depending on the local context. From NYC, collect using 2-week intervals, but
+from an unpopulated wilderness or rural area collect 9 months -- 2 years at a
+time.
 
 NOTE
 ####
@@ -92,9 +101,9 @@ ap.add_argument("-ed", "--enddate", required=True,
                 " YEAR-MO-DA for example 2018-02-18")
 
 # get wait time
-ap.add_argument("-w", "--wait", required=False, default=45,
+ap.add_argument("-w", "--wait", required=False, default=15,
                 help="Set wait time between requests to avoid Twitter rate limits. "
-                "Default: 45")
+                "Default: 15")
 
 # get interval
 ap.add_argument("-in", "--interval", required=True, default=1,
@@ -106,12 +115,20 @@ ap.add_argument("-b", "--bbox", required=True,
                 help="Path to bounding box geopackage. For example: "
                 "~/Data/project/bbox.gpkg")
 
+# get bounding box geopackage
+ap.add_argument("-o", "--output", required=True,
+                help="Path to output folder. For example: "
+                "~/Data/project/results/")
+
 # Parse arguments
 args = vars(ap.parse_args())
 
 # get waittime and interval
 waittime = int(args['wait'])
 interval = int(args['interval'])
+
+# get output path
+outpath = args['output']
 
 # load bounding box
 bbox_df = gpd.read_file(args['bbox'], driver='GPKG')
@@ -221,13 +238,13 @@ for intv in range(interval):
                 # check if size warrants shorter or longer wait time
                 if len(tweets) < 500:
                     
-                    # wait 6 seconds to avoid request bombing in case of zero or a few tweets
-                    time.sleep(6)
+                    # wait 8 seconds to avoid request bombing in case of zero or a few tweets
+                    time.sleep(8)
                     
                 else:
                     
                     # wait a bit longer
-                    time.sleep(18)
+                    time.sleep(waittime)
                     
                 # break free from while loop
                 break
@@ -237,8 +254,8 @@ for intv in range(interval):
                 if tries == 0:
                     raise err
                 else:
-                    print('[INFO] - Got connection error, waiting 15 seconds and trying again. ' + str(tries) + ' tries left.')
-                    time.sleep(15)
+                    print('[INFO] - Got connection error, waiting ' + str(waittime) + ' seconds and trying again. ' + str(tries) + ' tries left.')
+                    time.sleep(waittime)
         
         # extend current interval tweet list with tweets from current bounding box
         tweets_interval.extend(tweets)
@@ -282,7 +299,7 @@ for intv in range(interval):
         outpickle = file_prefix_w_date + '_part' + str(intv) + '.pkl'
         
         # save to pickle
-        tweetdf.to_pickle('GIS/sydney/pickles/' + outpickle)
+        tweetdf.to_pickle(outpath + outpickle)
         
         # collect loose garbage to free memory
         gc.collect()
