@@ -240,7 +240,7 @@ for user in users:
     # set up file prefix from config
     file_prefix_w_date = config['filename_prefix'] + start_date.isoformat()
     outpickle = file_prefix_w_date + '_user_' + str(user) + '.pkl'
-    outcsv = file_prefix_w_date + '.csv'
+    outcsv = file_prefix_w_date + '_user_' + str(user)+ '.csv'
     
     # save to file
     if args['output'] == 'pkl':
