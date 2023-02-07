@@ -82,12 +82,12 @@ ap.add_argument("-o", "--output", required=True, default='pkl',
                 "Default: pkl")
 
 # get output path
-ap.add_argument("-op", "--outpath", required=True,
+ap.add_argument("-op", "--outpath", required=False,
                 help="Path to output folder. For example: "
                 "~/Data/project/results/")
 
 # get user chunk size
-ap.add_argument("-c", "--chunksize", required=True, default=20,
+ap.add_argument("-c", "--chunksize", required=False, default=20,
                 help="The number of users to save into single dataframe."
                 "Default: 20")
 
@@ -150,7 +150,7 @@ start_date = args['startdate'].date()
 end_date = args['enddate'].date()
 
 # get chunks of user list
-for userchunk in chunker(users, user_chunksize):
+for userchunk in chunker(users, 20):
     print('users in chunk ' + str(len(userchunk)) + ' and second user id is ' + str(userchunk[1]))
     
     # get list for user dataframes
