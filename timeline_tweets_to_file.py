@@ -263,11 +263,15 @@ for userchunk in chunker(users, 20):
             pass
         
         # append dataframe to dataframe list
-        dflist.append(tweetdf)
-        gc.collect()
-        
-        # delete dataframe variable to cleanse the memory buffer
-        del tweetdf
+        try:
+            dflist.append(tweetdf)
+            gc.collect()
+            
+            # delete dataframe variable to cleanse the memory buffer
+            del tweetdf
+        except:
+            print('[INFO] - No tweets saved because users have no content from the time period. Moving on..')
+            pass
     
     # concatenate result dataframe
     results = pd.concat(dflist, ignore_index=True)
