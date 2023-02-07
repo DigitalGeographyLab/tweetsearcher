@@ -51,6 +51,7 @@ from datetime import datetime
 import time
 import argparse
 import pandas as pd
+import gc
 
 # Set up the argument parser
 ap = argparse.ArgumentParser()
@@ -139,7 +140,7 @@ end_date = args['enddate'].date()
 for user in users:
     
     # form search query per user and rule out retweets, replies and quote tweets
-    search_q = 'from:{} -is:retweet -is:reply -is:quote'.format(user)
+    search_q = 'from:{} -is:retweet has:geo'.format(user)
     
     # payload rules for v2 api
     rule = gen_request_parameters(query = search_q,
@@ -249,5 +250,9 @@ for user in users:
     elif args['output'] == 'csv':
         # save to csv
         tweetdf.to_csv(outpath + outcsv, sep=';', encoding='utf-8')
+    
+    # delete dataframe variable to cleanse the memory buffer
+    del tweetdf
+    gc.collect()
 
 print('[INFO] - ... done!')
