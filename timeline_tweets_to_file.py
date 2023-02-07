@@ -76,8 +76,16 @@ ap.add_argument("-o", "--output", required=True, default='pkl',
                 help="Output file format, valid options are either pkl or csv. "
                 "Default: pkl")
 
+# get bounding box geopackage
+ap.add_argument("-o", "--output", required=True,
+                help="Path to output folder. For example: "
+                "~/Data/project/results/")
+
 # Parse arguments
 args = vars(ap.parse_args())
+
+# get output path
+outpath = args['output']
 
 # check if output filetypes are valid
 if args['output'] == 'pkl':
@@ -237,9 +245,9 @@ for user in users:
     # save to file
     if args['output'] == 'pkl':
         # save to pickle
-        tweetdf.to_pickle(outpickle)
+        tweetdf.to_pickle(outpath + outpickle)
     elif args['output'] == 'csv':
         # save to csv
-        tweetdf.to_csv(outcsv, sep=';', encoding='utf-8')
+        tweetdf.to_csv(outpath + outcsv, sep=';', encoding='utf-8')
 
 print('[INFO] - ... done!')
