@@ -47,10 +47,9 @@ ends the collection on 23:59:59 on the day before the end date.
 
 from util_functions import v2parser, daterange
 from searchtweets import ResultStream, gen_request_parameters, load_credentials, read_config
-from datetime import datetime, timedelta
+from datetime import datetime
 import time
 import argparse
-import tweepy
 import pandas as pd
 
 # Set up the argument parser
@@ -188,9 +187,23 @@ for user in users:
                 print('[INFO] - Got connection error, waiting 15 seconds and trying again. ' + str(tries) + ' tries left.')
                 time.sleep(15)
     
+    # inform how many tweets per user were collected
+    print('[INFO] - Collected ' + str(len(tweets)) + ' tweets from user ' + str(user))
+    
     # parse results to dataframe
-    print('[INFO] - Parsing collected tweets of user ' + str(user) + 'from ' + str(start_date) + ' to ' + str(end_date))
-    tweetdf = v2parser(tweets, config['results_per_call'])
+    if len(tweets) != 0:
+        try:
+            # convert json to dataframe
+            print('[INFO] - Parsing collected tweets of user ' + str(user) + ' from ' + str(start_date) + ' to ' + str(end_date))
+            tweetdf = v2parser(tweets, config['results_per_call'])
+        
+        except:
+            print('[INFO] - User id ' + str(user) + ' tweets could not be converted to dataframe..')
+            pass
+    else:
+        print('[INFO] - User id ' + str(user) + ' is missing or has no tweets. Moving on...')
+        pass
+            
     
     # try to order columns semantically
     try:
