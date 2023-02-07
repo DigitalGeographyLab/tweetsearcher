@@ -79,7 +79,7 @@ Collection ends February 1st 2023
 
 from util_functions import v2parser, daterange
 from searchtweets import ResultStream, gen_request_parameters, load_credentials, read_config
-from datetime import datetime, timedelta
+from datetime import datetime
 import geopandas as gpd
 import time
 import argparse
@@ -196,7 +196,7 @@ for intv in range(interval):
         east = bbox['right']
         
         # form the search query based on bounding box southwest and northeast corner coordinates
-        search_q = f'bounding_box:[{west:.5f} {south:.5f} {east:.5f} {north:.5f}]'
+        search_q = f'bounding_box:[{west:.5f} {south:.5f} {east:.5f} {north:.5f}] -is:retweet -is:quote -is:reply'
     
         # generate payload rules for v2 api
         rule = gen_request_parameters(query = search_q,
@@ -239,7 +239,7 @@ for intv in range(interval):
                 if len(tweets) < 500:
                     
                     # wait 8 seconds to avoid request bombing in case of zero or a few tweets
-                    time.sleep(8)
+                    time.sleep(18)
                     
                 else:
                     
@@ -295,11 +295,12 @@ for intv in range(interval):
             pass
         
         # set up file prefix from config
-        file_prefix_w_date = search_config['filename_prefix'] + '_' + str(start_date) + '---' + str(end_date)
+        file_prefix_w_date = search_config['filename_prefix'] + '_' + str(intstart) + '---' + str(intend)
         outpickle = file_prefix_w_date + '_part' + str(intv) + '.pkl'
         
         # save to pickle
         tweetdf.to_pickle(outpath + outpickle)
+        print('[INFO] - Dataframe saved.')
         
         # collect loose garbage to free memory
         gc.collect()
@@ -307,6 +308,7 @@ for intv in range(interval):
     else:
         # print message and move to next bbox
         print('[INFO] - No geotagged tweets in bounding boxes between {} and {}. Moving on...'.format(str(start_date), str(end_date)))
+        gc.collect()
         pass
 
 print('[INFO] - ... done!')
