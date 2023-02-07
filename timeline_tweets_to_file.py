@@ -31,7 +31,7 @@ USAGE
 
 Run the script by typing:
     
-    python timeline_tweets_to_file.py -ul /path/to/list.csv -sd YEAR-MO-DA -ed YEAR-MO-DA -o pkl -op ~/path/to/folder/
+    python timeline_tweets_to_file.py -ul /path/to/list.csv -sd YEAR-MO-DA -ed YEAR-MO-DA -o pkl -op ~/path/to/folder/ -c 50
 
 Replace YEAR with the year you want, MO with the month you want and DA with the
 day of the month you want.
