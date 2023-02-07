@@ -31,7 +31,7 @@ USAGE
 
 Run the script by typing:
     
-    python timeline_tweets_to_file.py -ul /path/to/list.csv -sd YEAR-MO-DA -ed YEAR-MO-DA -o pkl
+    python timeline_tweets_to_file.py -ul /path/to/list.csv -sd YEAR-MO-DA -ed YEAR-MO-DA -o pkl -op ~/path/to/folder/
 
 Replace YEAR with the year you want, MO with the month you want and DA with the
 day of the month you want.
@@ -77,7 +77,7 @@ ap.add_argument("-o", "--output", required=True, default='pkl',
                 "Default: pkl")
 
 # get bounding box geopackage
-ap.add_argument("-o", "--output", required=True,
+ap.add_argument("-op", "--outpath", required=True,
                 help="Path to output folder. For example: "
                 "~/Data/project/results/")
 
