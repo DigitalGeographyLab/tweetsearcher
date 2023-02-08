@@ -73,7 +73,9 @@ Then just navigate to the cloned repository directory on your local machine and 
 ```
 python v2_tweets_to_file.py -sd 2020-04-28 -ed 2020-05-29 -o pkl -w 45 -s iterative
 ```
+
 and you after a while you should start accumulating pickled dataframes (`.pkl` files) one per date, so if you're requesting a full year then you'll be getting 365 files. The `-w` flag indicates the wait time in seconds if rate limit is reached. `iterative` (the `-s` flag) style is good for queries returning large amounts of tweets for each day (e.g. all geotagged tweets within Finland). The resulting files can be combined into one file with `combine_tweets.py` script. For queries returning small per-day tweet amounts use `bulk` style by typing:
+
 
 ```
 python v2_tweets_to_file.py -sd 2020-05-27 -ed 2020-05-29 -o pkl -s bulk
