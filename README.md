@@ -73,12 +73,12 @@ Then just navigate to the cloned repository directory on your local machine and 
 ```
 python v2_tweets_to_file.py -sd 2020-04-28 -ed 2020-05-29 -o pkl -w 45 -s iterative
 ```
-and you after a while you should start accumulating pickled dataframes (`.pkl` files) one per date, so if you're requesting a full year then you'll be getting 365 files. `iterative` style is good for queries returning large amounts of tweets for each day (e.g. all geotagged tweets within Finland). For queries returning small per-day tweet amounts use `bulk` style by typing:
+and you after a while you should start accumulating pickled dataframes (`.pkl` files) one per date, so if you're requesting a full year then you'll be getting 365 files. The `-w` flag indicates the wait time in seconds if rate limit is reached. `iterative` (the `-s` flag) style is good for queries returning large amounts of tweets for each day (e.g. all geotagged tweets within Finland). The resulting files can be combined into one file with `combine_tweets.py` script. For queries returning small per-day tweet amounts use `bulk` style by typing:
 
 ```
 python v2_tweets_to_file.py -sd 2020-05-27 -ed 2020-05-29 -o pkl -s bulk
 ```
-and you will get just one `.pkl` file. Please note that this `bulk` option is suitable for only queries where there might be very few tweets per day such as a very specific topic or from a few specific accounts. Using `bulk` option on a larger dataset will quickly hit the Twitter rate limit.
+and you will get just one `.pkl` file. Please note that this `bulk` option is suitable for only queries where there might be very few tweets per day such as a very specific topic or from a few specific accounts. Using `bulk` option on a larger dataset will quickly hit the Twitter rate limit and you won't get your data.
 
 Output files by default are pickled pandas dataframes(`.pkl`). They can be read into Python with [Pandas](https://pandas.pydata.org/) library for further processing. Saving to `.csv` files is also supported, but some fields containing data types like `list` and `dict` objects will be converted to plaintext. The flags stand for `sd` = start date, `ed` = end date, `o` = output file format, `w` = wait time in seconds (only for `iterative` style), and `s` = style. Wait time is there to be used if you think you're going to hit the Twitter rate limits when downloading tweets with `iterative`, for example when downloading a full year of geotagged tweets from Finland. *Please note that the end time date **IS NOT** collected, the collection stops at 23:59:59 the previous date, in the example case on the 28th of May at 23:59:59*.
 
