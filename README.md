@@ -68,12 +68,14 @@ output_params:
 For example: The above search config file would search for tweets mentioning snow or rain that have been geotagged in Finland and which are NOT retweets. The time window from which these tweets are searched from is defined when giving the command (see below). The parameters would return maximum of 500 results per call and a maximum of 100 000 tweets. The resulting file would be saved with the prefix `my_weather_search` and one file would contain a maximum of 1 000 000 tweets. If you want to set up a daily collection, remove `start_time` and `end_time` from the config, then the script will collect tweets from yesterday (i.e. the day before the current day). 
 
 ## Usage
-
+#### Time period collecting
 Then just navigate to the cloned repository directory on your local machine and type:
 ```
 python v2_tweets_to_file.py -sd 2020-04-28 -ed 2020-05-29 -o pkl -w 45 -s iterative
 ```
-and you after a while you should start accumulating pickled dataframes (`.pkl` files) one per date, so if you're requesting a full year then you'll be getting 365 files. The `-w` flag indicates the wait time in seconds if rate limit is reached. `iterative` style (the `-s` flag) is good for queries returning large amounts of tweets for each day (e.g. all geotagged tweets within Finland). The resulting files can be combined into one file with `combine_tweets.py` script. For queries returning small per-day tweet amounts use `bulk` style by typing:
+
+and you after a while you should start accumulating pickled dataframes (`.pkl` files) one per date, so if you're requesting a full year then you'll be getting 365 files. The `-w` flag indicates the wait time in seconds if rate limit is reached. `iterative` (the `-s` flag) style is good for queries returning large amounts of tweets for each day (e.g. all geotagged tweets within Finland). The resulting files can be combined into one file with `combine_tweets.py` script. For queries returning small per-day tweet amounts use `bulk` style by typing:
+
 
 ```
 python v2_tweets_to_file.py -sd 2020-05-27 -ed 2020-05-29 -o pkl -s bulk
@@ -81,6 +83,24 @@ python v2_tweets_to_file.py -sd 2020-05-27 -ed 2020-05-29 -o pkl -s bulk
 and you will get just one `.pkl` file. Please note that this `bulk` option is suitable for only queries where there might be very few tweets per day such as a very specific topic or from a few specific accounts. Using `bulk` option on a larger dataset will quickly hit the Twitter rate limit and you won't get your data.
 
 Output files by default are pickled pandas dataframes(`.pkl`). They can be read into Python with [Pandas](https://pandas.pydata.org/) library for further processing. Saving to `.csv` files is also supported, but some fields containing data types like `list` and `dict` objects will be converted to plaintext. The flags stand for `sd` = start date, `ed` = end date, `o` = output file format, `w` = wait time in seconds (only for `iterative` style), and `s` = style. Wait time is there to be used if you think you're going to hit the Twitter rate limits when downloading tweets with `iterative`, for example when downloading a full year of geotagged tweets from Finland. *Please note that the end time date **IS NOT** collected, the collection stops at 23:59:59 the previous date, in the example case on the 28th of May at 23:59:59*.
+
+#### Timeline collecting
+
+Use the following command to collect all tweets by users from a specific time period. Requires you to have a csv file with all user ids under a column named `usr_id`. The chunk flag (`-c`) indicates how many users' tweets should be in one `.csv` or `.pkl` file. The default is 20.
+```
+python timeline_tweets_to_file.py -ul /path/to/list.csv -sd YEAR-MO-DA -ed YEAR-MO-DA -o pkl -op ~/path/to/folder/ -c 50
+```
+Please note, that this uses the `all` endpoint of the Twitter API v2 and not the `user timeline` endpoint, which only allows to collect 3200 most recent tweets.
+
+#### Bounding box collecting
+
+This collection method requires you to have a bounding box geopackage file, which has been generated with `mmqgis` plugin in QGIS. Please note, the bounding box can *not* be larger than 25 miles by 25 miles. Run this collection method with the following command:
+```
+python bbox_tweets_to_file.py -sd YEAR-MO-DA -ed YEAR-MO-DA -w 15 -in 20 -b /path/to/bbox.gpkg -o path/to/results/
+```
+If you are collecting a longer time period from a popular place (like NYC, London, Sydney etc.), please use a larger interval number (`-in`). This ensures your collection runs faster, hits less rate limits, and has less chance of running out of memory. For instance, a 25 by 25 mile box from a popular place during Twitter's heydays (2014-2017) will easily return more than 150 000 tweets per month.
+
+#### Converting to geopackage
 
 If you downloaded with `iterative` style, you might want to combine the pickled dataframes to one big file. You can do this with `combine_tweets.py`. It supports saving to a [GeoPackage](https://www.geopackage.org/) file (a common spatial file format like shapefile), a pickled Pandas dataframe and a plain csv file. Combining tweets from `.csv` files hasn't been implemented yet as `csv` files do not retain data types. To combine tweets run the following command in the directory where you have the `.pkl` files:
 
@@ -103,7 +123,7 @@ If you're not interested in what bots have to say, then you have to do the clean
 # Known issues
 This tool is in very early stages of development and issues can arise if downloading very small datasets. Use the bulk option for small datasets.
 
-This tool has been tested on Linux (specifically Ubuntu 18.04, 20.04 and Manjaro 21.0.3). Confirmed to work on MacOS Catalina+ and Windows 10, FreeBSD should work too.
+This tool has been tested on Linux (specifically Ubuntu 18.04, 20.04, 22.04, and Manjaro 21.0.3). Confirmed to work on MacOS Catalina+ and Windows 10.
 
 Please report further issues and/or submit pull requests with fixes.
 

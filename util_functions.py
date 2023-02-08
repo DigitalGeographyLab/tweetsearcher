@@ -53,7 +53,7 @@ def ref_parse(tweets):
         refs = tweets['referenced_tweets']
         
         # loop over references
-        for i, item in refs.iteritems():
+        for i, item in refs.items():
             
             # check if there are references on row
             if type(item) == list:
@@ -91,7 +91,7 @@ def media_parse(tweets, media):
     medf = tweets['attachments.media_keys']
     
     # loop over media keys
-    for i, item in medf.iteritems():
+    for i, item in medf.items():
         
         # placholder for media types
         types = None
@@ -357,6 +357,9 @@ def v2parser(tweets, maxcalls):
         outdf = outdf.drop(columns=['attachments.poll_ids'])
     except:
         print('[INFO] - No poll ids found')
+        
+    # print full length of dataframe
+    print('[INFO] - Dataframe size: ' + str(len(outdf)) + ' tweets.')
 
     # give the output back
     return outdf
