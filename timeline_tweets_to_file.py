@@ -274,24 +274,32 @@ for userchunk in chunker(users, 20):
             pass
     
     # concatenate result dataframe
-    results = pd.concat(dflist, ignore_index=True)
+    if len(dflist) > 0:
+        
+        # concatenate
+        results = pd.concat(dflist, ignore_index=True)
     
-    # set up file prefix from config
-    file_prefix_w_date = config['filename_prefix'] + start_date.isoformat()
-    userstring = '_from_' + str(fuser) + '_to_' + str(luser)
-    outpickle = file_prefix_w_date + userstring + '.pkl'
-    outcsv = file_prefix_w_date + userstring + '.csv'
-    
-    # save to file
-    if args['output'] == 'pkl':
-        # save to pickle
-        results.to_pickle(outpath + outpickle)
-    elif args['output'] == 'csv':
-        # save to csv
-        results.to_csv(outpath + outcsv, sep=';', encoding='utf-8')
-    
-    # free up memory
-    del results, dflist
-    gc.collect()
+        # set up file prefix from config
+        file_prefix_w_date = config['filename_prefix'] + start_date.isoformat()
+        userstring = '_from_' + str(fuser) + '_to_' + str(luser)
+        outpickle = file_prefix_w_date + userstring + '.pkl'
+        outcsv = file_prefix_w_date + userstring + '.csv'
+        
+        # save to file
+        if args['output'] == 'pkl':
+            # save to pickle
+            results.to_pickle(outpath + outpickle)
+        elif args['output'] == 'csv':
+            # save to csv
+            results.to_csv(outpath + outcsv, sep=';', encoding='utf-8')
+        
+        # free up memory
+        del results, dflist
+        gc.collect()
+        
+    else:
+        
+        print('[INFO] - No data in current user chunk. Moving on...')
+        pass
 
 print('[INFO] - ... done!')
